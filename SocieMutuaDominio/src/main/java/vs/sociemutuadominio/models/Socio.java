@@ -1,41 +1,34 @@
 package vs.sociemutuadominio.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import java.sql.Date;
 import java.util.Objects;
 
 /**
- *
+ * Esta clase contiene los atributos y funciones de un socio.
  * @author Samuel Vega
  */
 public class Socio {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     private Long id;
-    
-    @Embedded
     private NombreCompleto nombreCompleto;
-    
-    @Column(name = "fecha_ingreso", nullable = false)
-    private LocalDateTime fechaIngreso;
-    
-    @Column(name = "paga", nullable = false)
+    private Date fechaIngreso;
     private Boolean paga;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iglesia_id", nullable = false)
     private Iglesia iglesia;
 
+    /**
+     * Constructor por omision.
+     */
     public Socio() {}
 
-    public Socio(Long id, NombreCompleto nombreCompleto, LocalDateTime fechaIngreso, boolean paga, Iglesia iglesia) {
+    /**
+     * Constructor completo.
+     * @param id Id del socio.
+     * @param nombreCompleto Nombre completo del socio.
+     * @param fechaIngreso Fecha en la ingreso.
+     * @param paga Indica si el socio paga o no paga las mensualidades.
+     * @param iglesia Iglesia a la que pertenece el socio.
+     */
+    public Socio(Long id, NombreCompleto nombreCompleto, Date fechaIngreso, boolean paga, Iglesia iglesia) {
         this.id = id;
         this.nombreCompleto = nombreCompleto;
         this.fechaIngreso = fechaIngreso;
@@ -59,11 +52,11 @@ public class Socio {
         this.nombreCompleto = nombreCompleto;
     }
 
-    public LocalDateTime getFechaIngreso() {
+    public Date getFechaIngreso() {
         return fechaIngreso;
     }
 
-    public void setFechaIngreso(LocalDateTime fecha_ingreso) {
+    public void setFechaIngreso(Date fecha_ingreso) {
         this.fechaIngreso = fecha_ingreso;
     }
 

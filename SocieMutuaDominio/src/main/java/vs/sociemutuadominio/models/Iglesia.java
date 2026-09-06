@@ -1,52 +1,56 @@
 package vs.sociemutuadominio.models;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * Esta clase define los atributos y funciones de una iglesia.
  * @author Samuel Vega
  */
-@Entity
-@Table(name = "iglesias")
 public class Iglesia {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
-    
-    @Column(name="nombre", nullable = false)
     private String nombre;
-    
-    @Column(name="saldo", nullable = false)
     private Double saldo;
-    
-    @Column(name="pastor", nullable = false)
     private String pastor;
-    
-    @OneToMany(mappedBy = "iglesia", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "socios", nullable = false)
     private List<Socio> socios;
-    
-    @OneToMany(mappedBy = "iglesia", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "mensualidades", nullable = true)
     private List<Mensualidad> mensualidades;
 
+    /**
+     * Constructor por omision.
+     */
     public Iglesia() {}
 
+    /**
+     * Constructor completo sin listas.
+     * @param id ID de la iglesia.
+     * @param nombre Nombre de la iglesia.
+     * @param saldo Saldo que tiene la iglesia.
+     * @param pastor Pastor que la dirige.
+     */
     public Iglesia(Long id, String nombre, Double saldo, String pastor) {
         this.id = id;
         this.nombre = nombre;
         this.saldo = saldo;
         this.pastor = pastor;
+    }
+
+    /**
+     * Constructor completo sin listas.
+     * @param id ID de la iglesia.
+     * @param nombre Nombre de la iglesia.
+     * @param saldo Saldo que tiene la iglesia.
+     * @param pastor Pastor que la dirige.
+     * @param socios Socios que tiene la iglesia.
+     * @param mensualidades Mensualidades que estan presentes en la iglesia.
+     */
+    public Iglesia(Long id, String nombre, Double saldo, String pastor, List<Socio> socios, List<Mensualidad> mensualidades) {
+        this.id = id;
+        this.nombre = nombre;
+        this.saldo = saldo;
+        this.pastor = pastor;
+        this.socios = socios;
+        this.mensualidades = mensualidades;
     }
 
     public Long getId() {
@@ -81,6 +85,22 @@ public class Iglesia {
         this.pastor = pastor;
     }
 
+    public List<Socio> getSocios() {
+        return socios;
+    }
+
+    public void setSocios(List<Socio> socios) {
+        this.socios = socios;
+    }
+
+    public List<Mensualidad> getMensualidades() {
+        return mensualidades;
+    }
+
+    public void setMensualidades(List<Mensualidad> mensualidades) {
+        this.mensualidades = mensualidades;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -104,7 +124,7 @@ public class Iglesia {
 
     @Override
     public String toString() {
-        return "Iglesia{" + "id=" + id + ", nombre=" + nombre + ", saldo=" + saldo + ", pastor=" + pastor + '}';
+        return "Iglesia{" + "id=" + id + ", nombre=" + nombre + ", saldo=" + saldo + ", pastor=" + pastor + ", socios=" + socios + ", mensualidades=" + mensualidades + '}';
     }
 
 }

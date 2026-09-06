@@ -1,54 +1,55 @@
 package vs.sociemutuadominio.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.sql.Date;
 import java.util.Objects;
 
 /**
- *
+ * Esta clase define los atributos y funciones de las mensualidades.
  * @author Samuel Vega
  */
-@Entity
-@Table(name = "mensualidades")
 public class Mensualidad {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
-    
-    @Column(name = "cuota", nullable = false)
+    private String mes;
     private Double cuota;
-    
-    @Column(name = "abonos", nullable = false)
     private Double abonos;
-    
-    @Column(name = "fecha_creacion", nullable = false)
-    private LocalDateTime fechaCreacion;
-    
-    @Column(name = "socios_pagan", nullable = false)
+    private Date fechaCreacion;
     private Integer sociosPagan;
-    
-    @Column(name = "defunciones", nullable = false)
     private Integer defunciones;
-    
-    @Column(name = "cargos", nullable = false)
     private Double cargos;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_iglesia", nullable = false)
     private Iglesia iglesia;
 
+    /**
+     * Constructor por omision.
+     */
     public Mensualidad() {}
 
-    public Mensualidad(Long id, Double cuota, Double abonos, LocalDateTime fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
+    /**
+     * Constructor completo.
+     * @param id ID de la mensualidad.
+     * @param mes Mes al que pertenece la mensualidad.
+     * @param cuota Cuota que se realiza al momento del objeto.
+     * @param abonos Abonos que se realizaron a la mensualidad.
+     * @param fechaCreacion Creacion de la mensualidad.
+     * @param sociosPagan Cantidad de socios que pagan.
+     * @param defunciones Cantidad de defunciones que hubo en el mes.
+     * @param cargos Cargos correspondientes a las defunciones y cuota.
+     * @param iglesia Iglesia que debe tal mensualidad.
+     */
+    public Mensualidad(Long id, String mes, Double cuota, Double abonos, Date fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
         this.id = id;
+        this.mes = mes;
+        this.cuota = cuota;
+        this.abonos = abonos;
+        this.fechaCreacion = fechaCreacion;
+        this.sociosPagan = sociosPagan;
+        this.defunciones = defunciones;
+        this.cargos = cargos;
+        this.iglesia = iglesia;
+    }
+
+    public Mensualidad(String mes, Double cuota, Double abonos, Date fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
+        this.mes = mes;
         this.cuota = cuota;
         this.abonos = abonos;
         this.fechaCreacion = fechaCreacion;
@@ -64,6 +65,14 @@ public class Mensualidad {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getMes() {
+        return mes;
+    }
+
+    public void setMes(String mes) {
+        this.mes = mes;
     }
 
     public Double getCuota() {
@@ -82,11 +91,11 @@ public class Mensualidad {
         this.abonos = abonos;
     }
 
-    public LocalDateTime getFechaCreacion() {
+    public Date getFechaCreacion() {
         return fechaCreacion;
     }
 
-    public void setFechaCreacion(LocalDateTime fecha_creacion) {
+    public void setFechaCreacion(Date fecha_creacion) {
         this.fechaCreacion = fecha_creacion;
     }
 

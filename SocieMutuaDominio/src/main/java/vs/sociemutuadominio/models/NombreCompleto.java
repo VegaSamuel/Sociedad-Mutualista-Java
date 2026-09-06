@@ -1,21 +1,25 @@
 package vs.sociemutuadominio.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
 /**
- *
+ * Esta clase define los establece el nombre completo de un socio.
  * @author Samuel Vega
  */
-@Embeddable
 public class NombreCompleto {
-    @Column(name = "nombre_completo")
     private String nombres;
     private String apellidoPaterno;
     private String apellidoMaterno;
 
+    /**
+     * Constructor por omision.
+     */
     public NombreCompleto() {}
 
+    /**
+     * Constructor completo.
+     * @param nombres Nombres del socio.
+     * @param apellidoPaterno Apellido paterno del socio.
+     * @param apellidoMaterno Apellido materno del socio.
+     */
     public NombreCompleto(String nombres, String apellidoPaterno, String apellidoMaterno) {
         this.nombres = nombres;
         this.apellidoPaterno = apellidoPaterno;
