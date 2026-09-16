@@ -26,21 +26,23 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
     
     @Override
     public void guardar(Mensualidad mensualidad) throws PersistenceException {
-        String sql = "INSERT INTO mensualidades(mes, cuota, abonos, fecha_creacion, socios_pagan, defunciones, cargos, id_iglesia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO mensualidades(mes, anio, cuota, abonos, fecha_creacion, socios_pagan, defunciones, cargos, id_iglesia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         try(PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, mensualidad.getMes());
-            stmt.setDouble(2, mensualidad.getCuota());
-            stmt.setDouble(3, mensualidad.getAbonos());
-            stmt.setDate(4, mensualidad.getFechaCreacion());
-            stmt.setInt(5, mensualidad.getSociosPagan());
-            stmt.setInt(6, mensualidad.getDefunciones());
-            stmt.setDouble(7, mensualidad.getCargos());
-            stmt.setLong(8, mensualidad.getIglesia().getId());
+            stmt.setString(2, mensualidad.getAnio());
+            stmt.setDouble(3, mensualidad.getCuota());
+            stmt.setDouble(4, mensualidad.getAbonos());
+            stmt.setDate(5, mensualidad.getFechaCreacion());
+            stmt.setInt(6, mensualidad.getSociosPagan());
+            stmt.setInt(7, mensualidad.getDefunciones());
+            stmt.setDouble(8, mensualidad.getCargos());
+            stmt.setLong(9, mensualidad.getIglesia().getId());
             stmt.executeUpdate();
         }catch(Exception e) {
             throw new PersistenceException("Error al guardar una mensualidad");
-        }}
+        }
+    }
 
     @Override
     public Mensualidad buscarPorId(Long id) throws PersistenceException {
@@ -83,14 +85,15 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
         
         try(PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, mensualidad.getMes());
-            stmt.setDouble(2, mensualidad.getCuota());
-            stmt.setDouble(3, mensualidad.getAbonos());
-            stmt.setDate(4, mensualidad.getFechaCreacion());
-            stmt.setInt(5, mensualidad.getSociosPagan());
-            stmt.setInt(6, mensualidad.getDefunciones());
-            stmt.setDouble(7, mensualidad.getCargos());
-            stmt.setLong(8, mensualidad.getIglesia().getId());
-            stmt.setLong(9, mensualidad.getId());
+            stmt.setString(2, mensualidad.getAnio());
+            stmt.setDouble(3, mensualidad.getCuota());
+            stmt.setDouble(4, mensualidad.getAbonos());
+            stmt.setDate(5, mensualidad.getFechaCreacion());
+            stmt.setInt(6, mensualidad.getSociosPagan());
+            stmt.setInt(7, mensualidad.getDefunciones());
+            stmt.setDouble(8, mensualidad.getCargos());
+            stmt.setLong(9, mensualidad.getIglesia().getId());
+            stmt.setLong(10, mensualidad.getId());
             
             stmt.executeUpdate();
         } catch(Exception e) {

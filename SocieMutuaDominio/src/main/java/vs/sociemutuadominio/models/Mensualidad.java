@@ -11,6 +11,7 @@ public class Mensualidad {
 
     private Long id;
     private String mes;
+    private String anio;
     private Double cuota;
     private Double abonos;
     private Date fechaCreacion;
@@ -28,6 +29,7 @@ public class Mensualidad {
      * Constructor completo.
      * @param id ID de la mensualidad.
      * @param mes Mes al que pertenece la mensualidad.
+     * @param anio Anio al que pertenece la mensualidad.
      * @param cuota Cuota que se realiza al momento del objeto.
      * @param abonos Abonos que se realizaron a la mensualidad.
      * @param fechaCreacion Creacion de la mensualidad.
@@ -36,9 +38,10 @@ public class Mensualidad {
      * @param cargos Cargos correspondientes a las defunciones y cuota.
      * @param iglesia Iglesia que debe tal mensualidad.
      */
-    public Mensualidad(Long id, String mes, Double cuota, Double abonos, Date fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
+    public Mensualidad(Long id, String mes, String anio, Double cuota, Double abonos, Date fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
         this.id = id;
         this.mes = mes;
+        this.anio = anio;
         this.cuota = cuota;
         this.abonos = abonos;
         this.fechaCreacion = fechaCreacion;
@@ -48,8 +51,9 @@ public class Mensualidad {
         this.iglesia = iglesia;
     }
 
-    public Mensualidad(String mes, Double cuota, Double abonos, Date fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
+    public Mensualidad(String mes, String anio, Double cuota, Double abonos, Date fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
         this.mes = mes;
+        this.anio = anio;
         this.cuota = cuota;
         this.abonos = abonos;
         this.fechaCreacion = fechaCreacion;
@@ -73,6 +77,14 @@ public class Mensualidad {
 
     public void setMes(String mes) {
         this.mes = mes;
+    }
+
+    public String getAnio() {
+        return anio;
+    }
+
+    public void setAnio(String anio) {
+        this.anio = anio;
     }
 
     public Double getCuota() {

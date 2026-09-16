@@ -57,6 +57,7 @@ public class PersistenceMapper {
         return new Mensualidad(
             rs.getLong("id"),
             rs.getString("mes"),
+            rs.getString("anio"),
             rs.getDouble("cuota"),
             rs.getDouble("abonos"),
             rs.getDate("fecha_creacion"),
