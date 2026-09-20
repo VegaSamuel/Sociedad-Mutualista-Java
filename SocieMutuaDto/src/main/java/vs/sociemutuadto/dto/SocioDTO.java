@@ -1,7 +1,7 @@
 package vs.sociemutuadto.dto;
 
 /**
- *
+ * Clase DTO de Socio para mostrar informacion en la UI.
  * @author Samuel Vega
  */
 public class SocioDTO {
