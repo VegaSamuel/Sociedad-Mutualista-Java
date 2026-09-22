@@ -26,7 +26,7 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
     
     @Override
     public void guardar(Mensualidad mensualidad) throws PersistenceException {
-        String sql = "INSERT INTO mensualidades(mes, anio, cuota, abonos, fecha_creacion, socios_pagan, defunciones, cargos, id_iglesia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO mensualidades(mes, anio, cuota, abonos, fecha_creacion, socios_pagan, defunciones, cargos, id_iglesia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try(PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, mensualidad.getMes());
@@ -81,7 +81,7 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
 
     @Override
     public void actualizar(Mensualidad mensualidad) throws PersistenceException {
-        String sql = "UPDATE mensualidades SET mes = ?, cuota = ?, abonos = ?, fecha_creacion = ?, socios_pagan = ?, defunciones = ?, cargos = ?, iglesia_id = ? WHERE id = ?";
+        String sql = "UPDATE mensualidades SET mes = ?, anio = ?, cuota = ?, abonos = ?, fecha_creacion = ?, socios_pagan = ?, defunciones = ?, cargos = ?, iglesia_id = ? WHERE id = ?";
         
         try(PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, mensualidad.getMes());

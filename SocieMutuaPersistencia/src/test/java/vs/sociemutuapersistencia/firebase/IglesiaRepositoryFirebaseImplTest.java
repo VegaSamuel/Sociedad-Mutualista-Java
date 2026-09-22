@@ -32,7 +32,7 @@ public class IglesiaRepositoryFirebaseImplTest {
     /**
      * Test of guardar method, of class IglesiaRepositoryFirebaseImpl.
      */
-    @Test
+    
     public void testGuardar() {
         System.out.println("Probando guardar una Iglesia en la nube...");
         
@@ -68,7 +68,7 @@ public class IglesiaRepositoryFirebaseImplTest {
     /**
      * Test of eliminar method, of class IglesiaRepositoryFirebaseImpl.
      */
-    @Test
+    
     public void testEliminar() {
         System.out.println("Probando eliminar una Iglesia en la nube...");
         

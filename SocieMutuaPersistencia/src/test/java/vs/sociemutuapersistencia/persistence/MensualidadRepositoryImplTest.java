@@ -74,10 +74,10 @@ public class MensualidadRepositoryImplTest {
             
             // Assert
             verify(statementMock).setString(1, "Diciembre");
-            verify(statementMock).setString(2, "Diaz");
-            verify(statementMock).setDouble(3, 7500d);
-            verify(statementMock).setInt(6, 2);
-            verify(statementMock).setLong(8, 10L);
+            verify(statementMock).setString(2, "2020");
+            verify(statementMock).setDouble(4, 7500d);
+            verify(statementMock).setInt(7, 2);
+            verify(statementMock).setLong(9, 10L);
             
             verify(statementMock, times(1)).executeUpdate();
         }catch(SQLException e) {
@@ -96,8 +96,8 @@ public class MensualidadRepositoryImplTest {
         Iglesia iglesia = new Iglesia();
         iglesia.setId(10L);
         Mensualidad mensualidadEsperada = new Mensualidad(
-            null,
-            "Diciembre",
+            1L,
+            "Agosto",
             "2020",
             5000d,
             7500d,
@@ -218,14 +218,14 @@ public class MensualidadRepositoryImplTest {
             // Assert
             verify(statementMock).setString(1, "Diciembre");
             verify(statementMock).setString(2, "2020");
-            verify(statementMock).setDouble(2, 5000d);
+            verify(statementMock).setDouble(3, 5000d);
             verify(statementMock).setDouble(4, 7500d);
             verify(statementMock).setDate(5, new java.sql.Date(50000));
             verify(statementMock).setInt(6, 5);
             verify(statementMock).setInt(7, 2);
             verify(statementMock).setDouble(8, 6000d);
-            verify(statementMock).setDouble(9, 20L);
-            verify(statementMock).setDouble(10, 4L);
+            verify(statementMock).setLong(9, 20L);
+            verify(statementMock).setLong(10, 4L);
             
             verify(statementMock, times(1)).executeUpdate();
         } catch (Exception ex) {

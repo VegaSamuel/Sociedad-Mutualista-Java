@@ -22,6 +22,7 @@ public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository
         
         docData.put("id_local", mensualidad.getId());
         docData.put("mes", mensualidad.getMes());
+        docData.put("anio", mensualidad.getAnio());
         docData.put("cuota", mensualidad.getCuota());
         docData.put("abonos", mensualidad.getAbonos());
         docData.put("fecha_creacion", mensualidad.getFechaCreacion());
