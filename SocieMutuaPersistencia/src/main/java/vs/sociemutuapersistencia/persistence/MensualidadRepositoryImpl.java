@@ -34,8 +34,8 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
             stmt.setDouble(3, mensualidad.getCuota());
             stmt.setDouble(4, mensualidad.getAbonos());
             stmt.setDate(5, mensualidad.getFechaCreacion());
-            stmt.setInt(6, mensualidad.getSociosPagan());
-            stmt.setInt(7, mensualidad.getDefunciones());
+            stmt.setLong(6, mensualidad.getSociosPagan());
+            stmt.setLong(7, mensualidad.getDefunciones());
             stmt.setDouble(8, mensualidad.getCargos());
             stmt.setLong(9, mensualidad.getIglesia().getId());
             stmt.executeUpdate();
@@ -89,8 +89,8 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
             stmt.setDouble(3, mensualidad.getCuota());
             stmt.setDouble(4, mensualidad.getAbonos());
             stmt.setDate(5, mensualidad.getFechaCreacion());
-            stmt.setInt(6, mensualidad.getSociosPagan());
-            stmt.setInt(7, mensualidad.getDefunciones());
+            stmt.setLong(6, mensualidad.getSociosPagan());
+            stmt.setLong(7, mensualidad.getDefunciones());
             stmt.setDouble(8, mensualidad.getCargos());
             stmt.setLong(9, mensualidad.getIglesia().getId());
             stmt.setLong(10, mensualidad.getId());

@@ -15,8 +15,8 @@ public class Mensualidad {
     private Double cuota;
     private Double abonos;
     private Date fechaCreacion;
-    private Integer sociosPagan;
-    private Integer defunciones;
+    private Long sociosPagan;
+    private Long defunciones;
     private Double cargos;
     private Iglesia iglesia;
 
@@ -38,7 +38,7 @@ public class Mensualidad {
      * @param cargos Cargos correspondientes a las defunciones y cuota.
      * @param iglesia Iglesia que debe tal mensualidad.
      */
-    public Mensualidad(Long id, String mes, String anio, Double cuota, Double abonos, Date fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
+    public Mensualidad(Long id, String mes, String anio, Double cuota, Double abonos, Date fechaCreacion, Long sociosPagan, Long defunciones, Double cargos, Iglesia iglesia) {
         this.id = id;
         this.mes = mes;
         this.anio = anio;
@@ -51,7 +51,7 @@ public class Mensualidad {
         this.iglesia = iglesia;
     }
 
-    public Mensualidad(String mes, String anio, Double cuota, Double abonos, Date fechaCreacion, Integer sociosPagan, Integer defunciones, Double cargos, Iglesia iglesia) {
+    public Mensualidad(String mes, String anio, Double cuota, Double abonos, Date fechaCreacion, Long sociosPagan, Long defunciones, Double cargos, Iglesia iglesia) {
         this.mes = mes;
         this.anio = anio;
         this.cuota = cuota;
@@ -111,19 +111,19 @@ public class Mensualidad {
         this.fechaCreacion = fecha_creacion;
     }
 
-    public Integer getSociosPagan() {
+    public Long getSociosPagan() {
         return sociosPagan;
     }
 
-    public void setSociosPagan(Integer socios_pagan) {
+    public void setSociosPagan(Long socios_pagan) {
         this.sociosPagan = socios_pagan;
     }
 
-    public Integer getDefunciones() {
+    public Long getDefunciones() {
         return defunciones;
     }
 
-    public void setDefunciones(Integer defunciones) {
+    public void setDefunciones(Long defunciones) {
         this.defunciones = defunciones;
     }
 

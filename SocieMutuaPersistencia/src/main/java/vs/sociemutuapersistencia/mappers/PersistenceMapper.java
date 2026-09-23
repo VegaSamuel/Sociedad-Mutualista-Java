@@ -61,8 +61,8 @@ public class PersistenceMapper {
             rs.getDouble("cuota"),
             rs.getDouble("abonos"),
             rs.getDate("fecha_creacion"),
-            rs.getInt("socios_pagan"),
-            rs.getInt("defunciones"),
+            rs.getLong("socios_pagan"),
+            rs.getLong("defunciones"),
             rs.getDouble("cargos"),
             iglesia
         );

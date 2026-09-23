@@ -11,8 +11,9 @@ import vs.sociemutuapersistencia.firebase.SocioRepositoryFirebaseImpl;
 import vs.sociemutuapersistencia.persistence.IglesiaRepositoryImpl;
 import vs.sociemutuapersistencia.persistence.MensualidadRepositoryImpl;
 import vs.sociemutuapersistencia.persistence.SocioRepositoryImpl;
+import vs.sociemutuapersistencia.sync.StartSyncVerifier;
 import vs.sociemutuapersistencia.sync.SyncMotor;
-import vs.sociemutuapresentacion.godly.GodView;
+import vs.sociemutuapresentacion.utils.InitialLoader;
 
 /**
  * Clase principal que inicia el programa, configura todo y abre la ventana principal
@@ -34,10 +35,12 @@ public class Main {
         SyncMotor motor = new SyncMotor(localSocio, cloudSocio, localIglesia, cloudIglesia, localMensualidad, cloudMensualidad);
         motor.iniciarSincronizacionAutomatica();
         
+        StartSyncVerifier verificator = new StartSyncVerifier(localSocio, cloudSocio, localIglesia, cloudIglesia, localMensualidad, cloudMensualidad);
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new GodView().setVisible(true);
+               new InitialLoader(verificator).setVisible(true);
             }
         });
     }

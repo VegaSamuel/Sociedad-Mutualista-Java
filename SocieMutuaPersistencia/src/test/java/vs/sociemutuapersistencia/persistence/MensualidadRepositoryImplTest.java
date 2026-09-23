@@ -63,8 +63,8 @@ public class MensualidadRepositoryImplTest {
                 5000d,
                 7500d,
                 new java.sql.Date(50000),
-                5,
-                2,
+                5L,
+                2L,
                 6000d,
                 iglesia
             );
@@ -76,7 +76,7 @@ public class MensualidadRepositoryImplTest {
             verify(statementMock).setString(1, "Diciembre");
             verify(statementMock).setString(2, "2020");
             verify(statementMock).setDouble(4, 7500d);
-            verify(statementMock).setInt(7, 2);
+            verify(statementMock).setLong(7, 2L);
             verify(statementMock).setLong(9, 10L);
             
             verify(statementMock, times(1)).executeUpdate();
@@ -102,8 +102,8 @@ public class MensualidadRepositoryImplTest {
             5000d,
             7500d,
             new java.sql.Date(50000),
-            5,
-            2,
+            5L,
+            2L,
             6000d,
             iglesia
         );
@@ -120,8 +120,8 @@ public class MensualidadRepositoryImplTest {
             when(resultSetMock.getDouble("cuota")).thenReturn(5000d);
             when(resultSetMock.getDouble("abonos")).thenReturn(4000d);
             when(resultSetMock.getDate("fecha_creacion")).thenReturn(new java.sql.Date(10000));
-            when(resultSetMock.getInt("socios_pagan")).thenReturn(2);
-            when(resultSetMock.getInt("defunciones")).thenReturn(5);
+            when(resultSetMock.getLong("socios_pagan")).thenReturn(2L);
+            when(resultSetMock.getLong("defunciones")).thenReturn(5L);
             when(resultSetMock.getDouble("cargos")).thenReturn(2500d);
             when(resultSetMock.getLong("iglesia_id")).thenReturn(10L);
             
@@ -161,8 +161,8 @@ public class MensualidadRepositoryImplTest {
             when(resultSetMock.getDouble("cuota")).thenReturn(5000d);
             when(resultSetMock.getDouble("abonos")).thenReturn(4000d);
             when(resultSetMock.getDate("fecha_creacion")).thenReturn(new java.sql.Date(10000));
-            when(resultSetMock.getInt("socios_pagan")).thenReturn(2);
-            when(resultSetMock.getInt("defunciones")).thenReturn(5);
+            when(resultSetMock.getLong("socios_pagan")).thenReturn(2L);
+            when(resultSetMock.getLong("defunciones")).thenReturn(5L);
             when(resultSetMock.getDouble("cargos")).thenReturn(2500d);
             when(resultSetMock.getLong("iglesia_id")).thenReturn(15L);
             
@@ -199,8 +199,8 @@ public class MensualidadRepositoryImplTest {
             5000d,
             7500d,
             new java.sql.Date(50000),
-            5,
-            2,
+            5L,
+            2L,
             6000d,
             iglesia
         );
@@ -221,8 +221,8 @@ public class MensualidadRepositoryImplTest {
             verify(statementMock).setDouble(3, 5000d);
             verify(statementMock).setDouble(4, 7500d);
             verify(statementMock).setDate(5, new java.sql.Date(50000));
-            verify(statementMock).setInt(6, 5);
-            verify(statementMock).setInt(7, 2);
+            verify(statementMock).setLong(6, 5L);
+            verify(statementMock).setLong(7, 2L);
             verify(statementMock).setDouble(8, 6000d);
             verify(statementMock).setLong(9, 20L);
             verify(statementMock).setLong(10, 4L);

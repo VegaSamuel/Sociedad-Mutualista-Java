@@ -1,7 +1,9 @@
 package vs.sociemutuapersistencia.firebase;
 
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,29 @@ public class IglesiaRepositoryFirebaseImpl implements IIglesiaRepository {
     public Iglesia buscarPorId(Long id) throws PersistenceException { return null; }
 
     @Override
-    public List<Iglesia> obtenerTodos() throws PersistenceException { return null; }
+    public List<Iglesia> obtenerTodos() throws PersistenceException {
+        Firestore db = FirestoreClient.getFirestore();
+        List<Iglesia> iglesias = new ArrayList<>();
+        
+        try {
+            List<QueryDocumentSnapshot> documents = db.collection("iglesias").get().get().getDocuments();
+            
+            for(QueryDocumentSnapshot doc : documents) {
+                Iglesia iglesia = new Iglesia();
+                
+                if(doc.getLong("id_local") != null) iglesia.setId(doc.getLong("id_local"));
+                iglesia.setNombre(doc.getString("nombre"));
+                iglesia.setSaldo(doc.getDouble("saldo"));
+                iglesia.setPastor(doc.getString("pastor"));
+
+                iglesias.add(iglesia);
+            }
+            
+            return iglesias;
+        }catch(Exception e) {
+            throw new PersistenceException("Error al descargar el respaldo de Iglesias: " + e.getMessage());
+        }
+    }
 
     @Override
     public void actualizar(Iglesia iglesia) throws PersistenceException { guardar(iglesia); }

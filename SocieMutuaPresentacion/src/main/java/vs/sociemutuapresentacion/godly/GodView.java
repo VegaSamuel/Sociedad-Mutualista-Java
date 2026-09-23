@@ -1,11 +1,8 @@
 package vs.sociemutuapresentacion.godly;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import vs.sociemutuadominio.models.Iglesia;
-import vs.sociemutuadominio.models.NombreCompleto;
 import vs.sociemutuadominio.models.Socio;
 import vs.sociemutuadto.dto.IglesiaDTO;
 import vs.sociemutuapresentacion.enums.Operations;
@@ -25,6 +22,8 @@ public class GodView extends javax.swing.JFrame {
         this.testIg = null;
         
         initComponents();
+        
+        this.btnSIGenerate.setVisible(false);
     }
     
     private boolean faltaEntidadPrueba(String entidad) {
@@ -167,12 +166,12 @@ public class GodView extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnIRemoveActionPerformed
 
     private void btnIGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIGenerateActionPerformed
-//        testIg = new IglesiaDTO(
-//            1L,
-//            "Primera Iglesia Obregon",
-//            50000d,
-//            "Gildardo Fierro"
-//        );
+        testIg = new IglesiaDTO();
+        
+        testIg.setId(1L);
+        testIg.setNombre("Primera Iglesia Obregon");
+        testIg.setSaldo(50000d);
+        testIg.setPastor("Gildardo Fierro");
         
         JOptionPane.showMessageDialog(this, 
                 "Iglesia Creada. \n"

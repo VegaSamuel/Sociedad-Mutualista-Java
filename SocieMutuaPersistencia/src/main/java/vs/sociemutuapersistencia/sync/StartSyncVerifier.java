@@ -53,7 +53,7 @@ public class StartSyncVerifier {
     }
     
     private void verificarIglesias() throws Exception {
-        if(localSocioRepo.obtenerTodos().isEmpty()) {
+        if(localIglesiaRepo.obtenerTodos().isEmpty()) {
             System.out.println("Base de datos de Iglesias local vacia. Restaurando desde Firebase...");
             List<Iglesia> iglesiasNube = cloudIglesiaRepo.obtenerTodos();
             
@@ -64,8 +64,8 @@ public class StartSyncVerifier {
     }
      
     private void verificarMensualidades() throws Exception {
-        if(localSocioRepo.obtenerTodos().isEmpty()) {
-            System.out.println("Base de datos de Socios local vacia. Restaurando desde Firebase...");
+        if(localMensualidadRepo.obtenerTodos().isEmpty()) {
+            System.out.println("Base de datos de Mensualidades local vacia. Restaurando desde Firebase...");
             List<Mensualidad> mensualidadNube = cloudMensualidadRepo.obtenerTodos();
             
             for (Mensualidad mensualidad : mensualidadNube) {

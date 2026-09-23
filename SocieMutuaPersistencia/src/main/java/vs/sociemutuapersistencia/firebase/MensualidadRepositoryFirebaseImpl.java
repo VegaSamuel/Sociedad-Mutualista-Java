@@ -1,12 +1,16 @@
 package vs.sociemutuapersistencia.firebase;
 
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
+import java.util.ArrayList;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import vs.sociemutuadominio.exceptions.PersistenceException;
 import vs.sociemutuadominio.interfaces.IMensualidadRepository;
+import vs.sociemutuadominio.models.Iglesia;
 import vs.sociemutuadominio.models.Mensualidad;
 
 /**
@@ -42,7 +46,39 @@ public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository
     public Mensualidad buscarPorId(Long id) throws PersistenceException { return null; }
 
     @Override
-    public List<Mensualidad> obtenerTodos() throws PersistenceException { return null; }
+    public List<Mensualidad> obtenerTodos() throws PersistenceException {
+        Firestore db = FirestoreClient.getFirestore();
+        List<Mensualidad> mensualidades = new ArrayList<>();
+        
+        try {
+            List<QueryDocumentSnapshot> documents = db.collection("mensualidades").get().get().getDocuments();
+            
+            for(QueryDocumentSnapshot doc : documents) {
+                Mensualidad mensualidad = new Mensualidad();
+                
+                if(doc.getLong("id_local") != null) mensualidad.setId(doc.getLong("id_local"));
+                mensualidad.setMes(doc.getString("mes"));
+                mensualidad.setAnio(doc.getString("anio"));
+                mensualidad.setCuota(doc.getDouble("cuota"));
+                mensualidad.setAbonos(doc.getDouble("abonos"));
+                mensualidad.setFechaCreacion((Date) doc.getDate("fecha_ingreso"));
+                mensualidad.setSociosPagan(doc.getLong("socios_pagan"));
+                mensualidad.setDefunciones(doc.getLong("defunciones"));
+                mensualidad.setCargos(doc.getDouble("cargos"));
+                if(doc.getLong("iglesia_id") != null) {
+                    Iglesia iglesia = new Iglesia();
+                    iglesia.setId(doc.getLong("iglesia_id"));
+                    mensualidad.setIglesia(iglesia);
+                }
+
+                mensualidades.add(mensualidad);
+            }
+            
+            return mensualidades;
+        }catch(Exception e) {
+            throw new PersistenceException("Error al descargar el respaldo de Socios: " + e.getMessage());
+        }
+    }
 
     @Override
     public void actualizar(Mensualidad mensualidad) throws PersistenceException { guardar(mensualidad); }

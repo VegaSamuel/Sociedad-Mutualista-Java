@@ -13,8 +13,8 @@ public class MensualidadDTO {
     private Double cuota;
     private Double abonos;
     private Date fechaCreacion;
-    private Integer sociosPagan;
-    private Integer defunciones;
+    private Long sociosPagan;
+    private Long defunciones;
     private Double cargos;
     private String nombreIglesia;
     
@@ -68,19 +68,19 @@ public class MensualidadDTO {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public Integer getSociosPagan() {
+    public Long getSociosPagan() {
         return sociosPagan;
     }
 
-    public void setSociosPagan(Integer sociosPagan) {
+    public void setSociosPagan(Long sociosPagan) {
         this.sociosPagan = sociosPagan;
     }
 
-    public Integer getDefunciones() {
+    public Long getDefunciones() {
         return defunciones;
     }
 
-    public void setDefunciones(Integer defunciones) {
+    public void setDefunciones(Long defunciones) {
         this.defunciones = defunciones;
     }
 
