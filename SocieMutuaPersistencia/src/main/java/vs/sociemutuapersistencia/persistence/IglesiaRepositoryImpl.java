@@ -3,6 +3,7 @@ package vs.sociemutuapersistencia.persistence;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import vs.sociemutuadominio.exceptions.PersistenceException;
@@ -28,13 +29,19 @@ public class IglesiaRepositoryImpl implements IIglesiaRepository {
     public void guardar(Iglesia iglesia) throws PersistenceException {
         String sql = "INSERT INTO iglesias(nombre, saldo, pastor) VALUES (?, ?, ?)";
         
-        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try(PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, iglesia.getNombre());
             stmt.setDouble(2, iglesia.getSaldo());
             stmt.setString(3, iglesia.getPastor());
             stmt.executeUpdate();
+            
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    iglesia.setId(generatedKeys.getLong(1));
+                }
+            }
         }catch(Exception e) {
-            throw new PersistenceException("Error al guardar una iglesia");
+            throw new PersistenceException("Error al guardar una iglesia: " + e.getMessage());
         }
     }
 

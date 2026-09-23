@@ -1,7 +1,13 @@
 package vs.sociemutuapresentacion.godly;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import vs.sociemutuadominio.models.Iglesia;
+import vs.sociemutuadominio.models.NombreCompleto;
+import vs.sociemutuadominio.models.Socio;
+import vs.sociemutuadto.dto.IglesiaDTO;
 import vs.sociemutuapresentacion.enums.Operations;
 import vs.sociemutuapresentacion.ui.IglesiaView;
 
@@ -10,7 +16,7 @@ import vs.sociemutuapresentacion.ui.IglesiaView;
  * @author Samuel Vega
  */
 public class GodView extends javax.swing.JFrame {
-    private Iglesia testIg;
+    private IglesiaDTO testIg;
 
     /**
      * Creates new form GodClass
@@ -56,6 +62,7 @@ public class GodView extends javax.swing.JFrame {
         btnIUpdate = new javax.swing.JButton();
         BtnIRemove = new javax.swing.JButton();
         btnIGenerate = new javax.swing.JButton();
+        btnSIGenerate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GOD Controls | All Operations At One");
@@ -79,6 +86,9 @@ public class GodView extends javax.swing.JFrame {
         btnIGenerate.setText("Generar Iglesia");
         btnIGenerate.addActionListener(this::btnIGenerateActionPerformed);
 
+        btnSIGenerate.setText("Generar Socios");
+        btnSIGenerate.addActionListener(this::btnSIGenerateActionPerformed);
+
         javax.swing.GroupLayout iglesiasPanelLayout = new javax.swing.GroupLayout(iglesiasPanel);
         iglesiasPanel.setLayout(iglesiasPanelLayout);
         iglesiasPanelLayout.setHorizontalGroup(
@@ -94,7 +104,10 @@ public class GodView extends javax.swing.JFrame {
                             .addComponent(btnIGenerate)
                             .addComponent(BtnIRemove)
                             .addComponent(btnIUpdate)
-                            .addComponent(btnISave))))
+                            .addComponent(btnISave)))
+                    .addGroup(iglesiasPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnSIGenerate)))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
         iglesiasPanelLayout.setVerticalGroup(
@@ -110,7 +123,9 @@ public class GodView extends javax.swing.JFrame {
                 .addComponent(BtnIRemove)
                 .addGap(18, 18, 18)
                 .addComponent(btnIGenerate)
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSIGenerate)
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -135,7 +150,7 @@ public class GodView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnISaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnISaveActionPerformed
-        IglesiaView iv = new IglesiaView(new Iglesia(), Operations.GUARDAR);
+        IglesiaView iv = new IglesiaView(new IglesiaDTO(), Operations.GUARDAR);
         iv.setVisible(true);
     }//GEN-LAST:event_btnISaveActionPerformed
 
@@ -152,12 +167,12 @@ public class GodView extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnIRemoveActionPerformed
 
     private void btnIGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIGenerateActionPerformed
-        testIg = new Iglesia(
-            1L,
-            "Primera Iglesia Obregon",
-            50000d,
-            "Gildardo Fierro"
-        );
+//        testIg = new IglesiaDTO(
+//            1L,
+//            "Primera Iglesia Obregon",
+//            50000d,
+//            "Gildardo Fierro"
+//        );
         
         JOptionPane.showMessageDialog(this, 
                 "Iglesia Creada. \n"
@@ -169,11 +184,65 @@ public class GodView extends javax.swing.JFrame {
         );
     }//GEN-LAST:event_btnIGenerateActionPerformed
 
+    private void btnSIGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSIGenerateActionPerformed
+        if(testIg == null) {
+            JOptionPane.showMessageDialog(this, 
+                "Para asignarle Socios a una iglesia primero debe existir una. \nPor favor, presione \"Generar Iglesia\" para generar una.",
+                "GOD | Generar Socios",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+        
+        List<Socio> sociosIglesia = new ArrayList<>();
+        
+//        if(testIg.getSocios() == null) {
+//            sociosIglesia.add(new Socio(
+//                1L,
+//                new NombreCompleto("Gildardo", "Fierro", "Cazares"),
+//                new Date(1000),
+//                true,
+//                testIg
+//            ));
+//
+//            sociosIglesia.add(new Socio(
+//                2L,
+//                new NombreCompleto("Gildardo", "Fierro", "Cazares"),
+//                new Date(1000),
+//                true,
+//                testIg
+//            ));
+//
+//            sociosIglesia.add(new Socio(
+//                3L,
+//                new NombreCompleto("Gildardo", "Fierro", "Cazares"),
+//                new Date(1000),
+//                true,
+//                testIg
+//            ));
+//
+//            testIg.setSocios(sociosIglesia);
+//            
+//            JOptionPane.showMessageDialog(this, 
+//                "Socios para la iglesia creados.",
+//                "GOD | Generar Socios",
+//                JOptionPane.INFORMATION_MESSAGE
+//            );
+//        } else {
+//            JOptionPane.showMessageDialog(this, 
+//                "la iglesia ya cuenta con socios suficientes para probar.",
+//                "GOD | Generar Socios",
+//                JOptionPane.INFORMATION_MESSAGE
+//            );
+//        }
+    }//GEN-LAST:event_btnSIGenerateActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnIRemove;
     private javax.swing.JButton btnIGenerate;
     private javax.swing.JButton btnISave;
     private javax.swing.JButton btnIUpdate;
+    private javax.swing.JButton btnSIGenerate;
     private javax.swing.JPanel iglesiasPanel;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables

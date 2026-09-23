@@ -72,7 +72,7 @@ public class MainView extends javax.swing.JFrame {
         editMenu.setText("Edit");
 
         cutMenuItem.setMnemonic('t');
-        cutMenuItem.setText("Cut");
+        cutMenuItem.setText("Cambio Pastoral...");
         editMenu.add(cutMenuItem);
 
         copyMenuItem.setMnemonic('y');

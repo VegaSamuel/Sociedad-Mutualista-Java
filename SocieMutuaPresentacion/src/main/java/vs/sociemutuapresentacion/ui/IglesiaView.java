@@ -1,7 +1,11 @@
 package vs.sociemutuapresentacion.ui;
 
 import javax.swing.JOptionPane;
-import vs.sociemutuadominio.models.Iglesia;
+import vs.sociemutuadto.dto.IglesiaDTO;
+import vs.sociemutuadto.mapper.IglesiaDTOMapper;
+import vs.sociemutuapersistencia.firebase.IglesiaRepositoryFirebaseImpl;
+import vs.sociemutuapersistencia.persistence.IglesiaRepositoryImpl;
+import vs.sociemutuapersistencia.sync.persistence.IglesiaRepositorySyncImpl;
 import vs.sociemutuapresentacion.enums.Operations;
 
 /**
@@ -9,15 +13,20 @@ import vs.sociemutuapresentacion.enums.Operations;
  * @author Samuel Vega
  */
 public class IglesiaView extends javax.swing.JFrame {
+    private final IglesiaRepositorySyncImpl iglesiaRepo;
     private final Operations operacion;
-    private Iglesia iglesia;
+    private IglesiaDTO iglesia;
 
     /**
      * Creates new form IglesiaView
      * @param iglesia Iglesia que se utilizara en la ventana.
      * @param operacion La operacion que se va a realizar en la ventana actual.
      */
-    public IglesiaView(Iglesia iglesia, Operations operacion) {
+    public IglesiaView(IglesiaDTO iglesia, Operations operacion) {
+        this.iglesiaRepo = new IglesiaRepositorySyncImpl(
+            new IglesiaRepositoryImpl(),
+            new IglesiaRepositoryFirebaseImpl()
+        );
         this.iglesia = iglesia;
         this.operacion = operacion;
         
@@ -54,6 +63,40 @@ public class IglesiaView extends javax.swing.JFrame {
         this.txtPastor.setText(iglesia.getPastor());
         this.txtSaldo.setText(String.valueOf(iglesia.getSaldo()));
     }
+    
+    private boolean verificarCampos() {
+        if(this.txtNombre.getText().equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "La iglesia debe tener un nombre.",
+                "Iglesia | Campos incompletos",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return false;
+        }
+        
+        if(this.txtPastor.getText().equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "La iglesia debe tener un pastor.",
+                "Iglesia | Campos incompletos",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return false;
+        }
+        
+        if(this.txtSaldo.getText().equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "La iglesia debe tener un saldo inicial.",
+                "Iglesia | Campos incompletos",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return false;
+        }
+        
+        return true;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -86,9 +129,13 @@ public class IglesiaView extends javax.swing.JFrame {
 
         jLabel2.setText("Saldo:  $");
 
+        txtSaldo.setText("0.00");
+
         btnEditSocios.setText("Editar Socios...");
+        btnEditSocios.addActionListener(this::btnEditSociosActionPerformed);
 
         btnAceptar.setText("Actualizar");
+        btnAceptar.addActionListener(this::btnAceptarActionPerformed);
 
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(this::btnCancelarActionPerformed);
@@ -117,13 +164,14 @@ public class IglesiaView extends javax.swing.JFrame {
                             .addComponent(txtNombre)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnEditSocios))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnCancelar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnRestaurar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAceptar)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnEditSocios, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(btnCancelar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnRestaurar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnAceptar)))))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -172,6 +220,44 @@ public class IglesiaView extends javax.swing.JFrame {
         
         if(response == 0) this.rescatarInformacion();
     }//GEN-LAST:event_btnRestaurarActionPerformed
+
+    private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
+        if(!verificarCampos()) return;
+        
+        if(operacion.equals(Operations.GUARDAR)) {
+            IglesiaDTO iDto = new IglesiaDTO();
+            iDto.setNombre(txtNombre.getText());
+            iDto.setPastor(txtPastor.getText());
+            iDto.setSaldo(Double.valueOf(txtSaldo.getText()));
+            
+            this.iglesiaRepo.guardar(IglesiaDTOMapper.toIglesia(iDto));
+        }
+        
+        if(operacion.equals(Operations.ACTUALIZAR)) {
+            IglesiaDTO iDto = new IglesiaDTO();
+            iDto.setId(iglesia.getId());
+            iDto.setNombre(txtNombre.getText());
+            iDto.setPastor(txtPastor.getText());
+            iDto.setSaldo(Double.valueOf(txtSaldo.getText()));
+            
+            this.iglesiaRepo.actualizar(IglesiaDTOMapper.toIglesia(iDto));
+        }
+    }//GEN-LAST:event_btnAceptarActionPerformed
+
+    private void btnEditSociosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditSociosActionPerformed
+        if(txtNombre.getText().isBlank()) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "La iglesia debe tener al menos el nombre para asignarle socios en primera instancia",
+                "Iglesias | Sin informacion",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+        
+        SociosIglesiaView siv = new SociosIglesiaView(iglesia, txtNombre.getText());
+        siv.setVisible(true);
+    }//GEN-LAST:event_btnEditSociosActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceptar;

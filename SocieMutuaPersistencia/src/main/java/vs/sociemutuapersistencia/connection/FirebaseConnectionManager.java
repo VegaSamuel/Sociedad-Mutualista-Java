@@ -17,7 +17,7 @@ public class FirebaseConnectionManager {
     public static void inicializar() {
         if(!inicializado) {
             try {
-                Dotenv env = Dotenv.load();
+                Dotenv env = Dotenv.configure().directory("../SocieMutuaPersistencia").load();
                 FileInputStream serviceAccount = new FileInputStream(env.get("FIREBASE_CREDENTIALS_PATH"));
                 
                 FirebaseOptions options = FirebaseOptions.builder()

@@ -76,6 +76,8 @@ public class IglesiaRepositorySyncImpl implements IIglesiaRepository {
         try(PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, entidadId);
             stmt.setString(2, accion);
+            
+            stmt.executeUpdate();
         }catch(Exception e) {
             System.out.println(e.getMessage());
         }

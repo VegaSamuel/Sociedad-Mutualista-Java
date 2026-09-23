@@ -21,4 +21,17 @@ public class IglesiaDTOMapper {
         
         return dto;
     }
+    
+    public static Iglesia toIglesia(IglesiaDTO dto) {
+        if(dto == null) return null;
+        
+        Iglesia iglesia = new Iglesia();
+        iglesia.setId(dto.getId());
+        
+        iglesia.setNombre(dto.getNombre());
+        iglesia.setPastor(dto.getPastor());
+        iglesia.setSaldo(dto.getSaldo());
+        
+        return iglesia;
+    }
 }
