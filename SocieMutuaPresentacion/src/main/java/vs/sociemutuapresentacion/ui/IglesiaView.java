@@ -1,6 +1,7 @@
 package vs.sociemutuapresentacion.ui;
 
 import javax.swing.JOptionPane;
+import vs.sociemutuadominio.interfaces.IIglesiaRepository;
 import vs.sociemutuadto.dto.IglesiaDTO;
 import vs.sociemutuadto.mapper.IglesiaDTOMapper;
 import vs.sociemutuapersistencia.firebase.IglesiaRepositoryFirebaseImpl;
@@ -13,7 +14,7 @@ import vs.sociemutuapresentacion.enums.Operations;
  * @author Samuel Vega
  */
 public class IglesiaView extends javax.swing.JFrame {
-    private final IglesiaRepositorySyncImpl iglesiaRepo;
+    private final IIglesiaRepository iglesiaRepo;
     private final Operations operacion;
     private IglesiaDTO iglesia;
 
@@ -37,16 +38,19 @@ public class IglesiaView extends javax.swing.JFrame {
     
     private void manejarElementosVisuales() {
         if(operacion.equals(Operations.GUARDAR)) {
+            this.setTitle(this.getTitle() + " | Guardar");
             this.btnAceptar.setText("Guardar");
             this.btnRestaurar.setEnabled(false);
         }
         
         if(operacion.equals(Operations.ACTUALIZAR)) {
+            this.setTitle(this.getTitle() + " | Actualizar");
             this.btnAceptar.setText("Actualizar");
             this.rescatarInformacion();
         }
         
         if(operacion.equals(Operations.ELIMINAR)) {
+            this.setTitle(this.getTitle() + " | Eliminar");
             this.btnAceptar.setText("Eliminar");
             this.btnRestaurar.setVisible(false);
             
@@ -231,6 +235,15 @@ public class IglesiaView extends javax.swing.JFrame {
             iDto.setSaldo(Double.valueOf(txtSaldo.getText()));
             
             this.iglesiaRepo.guardar(IglesiaDTOMapper.toIglesia(iDto));
+            
+            JOptionPane.showMessageDialog(
+                this, 
+                "La iglesia se guardo exitosamente.",
+                "Iglesias | Iglesia guardada",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            
+            dispose();
         }
         
         if(operacion.equals(Operations.ACTUALIZAR)) {
@@ -241,6 +254,30 @@ public class IglesiaView extends javax.swing.JFrame {
             iDto.setSaldo(Double.valueOf(txtSaldo.getText()));
             
             this.iglesiaRepo.actualizar(IglesiaDTOMapper.toIglesia(iDto));
+            
+            JOptionPane.showMessageDialog(
+                this, 
+                "La iglesia se actualizo exitosamente.",
+                "Iglesias | Iglesia actualizada",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            
+            dispose();
+        }
+        
+        if(operacion.equals(Operations.ELIMINAR)) {
+            int response = JOptionPane.showConfirmDialog(this, "Seguro que desea eliminar la iglesia: \"" + iglesia.getNombre() + "\"?", "Iglesia | Eliminar", JOptionPane.YES_NO_OPTION);
+        
+            if(response == 0) {
+                this.iglesiaRepo.eliminar(iglesia.getId());
+                JOptionPane.showMessageDialog(
+                    this, 
+                    "La iglesia:  \"" + iglesia.getNombre() + "\" se elimino exitosamente.",
+                    "Iglesias | Iglesia eliminada",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                dispose();
+            }
         }
     }//GEN-LAST:event_btnAceptarActionPerformed
 

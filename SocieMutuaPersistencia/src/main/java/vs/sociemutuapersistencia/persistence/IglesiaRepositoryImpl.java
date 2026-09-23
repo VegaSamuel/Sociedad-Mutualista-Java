@@ -89,6 +89,7 @@ public class IglesiaRepositoryImpl implements IIglesiaRepository {
             stmt.setString(1, iglesia.getNombre());
             stmt.setDouble(2, iglesia.getSaldo());
             stmt.setString(3, iglesia.getPastor());
+            stmt.setLong(4, iglesia.getId());
             
             stmt.executeUpdate();
         } catch(Exception e) {

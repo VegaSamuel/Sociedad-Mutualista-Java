@@ -3,33 +3,39 @@ package vs.sociemutuapresentacion.godly;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import vs.sociemutuadominio.models.Socio;
+import vs.sociemutuadominio.interfaces.IIglesiaRepository;
+import vs.sociemutuadominio.models.Iglesia;
 import vs.sociemutuadto.dto.IglesiaDTO;
+import vs.sociemutuadto.mapper.IglesiaDTOMapper;
+import vs.sociemutuapersistencia.persistence.IglesiaRepositoryImpl;
 import vs.sociemutuapresentacion.enums.Operations;
 import vs.sociemutuapresentacion.ui.IglesiaView;
+import vs.sociemutuapresentacion.ui.TableView;
 
 /**
  * Hecha para testear de diferentes formas las ventanas
  * @author Samuel Vega
  */
 public class GodView extends javax.swing.JFrame {
+    private final IIglesiaRepository iglesiaRepo;
+    private TableView tableView;
     private IglesiaDTO testIg;
 
     /**
      * Creates new form GodClass
      */
     public GodView() {
+        this.iglesiaRepo = new IglesiaRepositoryImpl();
+        this.tableView = new TableView();
         this.testIg = null;
         
         initComponents();
-        
-        this.btnSIGenerate.setVisible(false);
     }
     
     private boolean faltaEntidadPrueba(String entidad) {
         if(entidad.equalsIgnoreCase("iglesia")) {
             if(testIg == null) {
-                this.MostrarError("No existe ninguna Iglesia sobre cual probar esta ventana.\nPor favor, presione \"Generar Iglesia\" para acceder a esta ventana.");
+                this.MostrarError("No existe ninguna Iglesia sobre cual probar esta ventana.\nPor favor, presione \"Obtener una Iglesia\" para acceder a esta ventana.");
                 return true;
             }
         }
@@ -60,8 +66,8 @@ public class GodView extends javax.swing.JFrame {
         btnISave = new javax.swing.JButton();
         btnIUpdate = new javax.swing.JButton();
         BtnIRemove = new javax.swing.JButton();
-        btnIGenerate = new javax.swing.JButton();
-        btnSIGenerate = new javax.swing.JButton();
+        btnIChoose = new javax.swing.JButton();
+        btnShowITbl = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GOD Controls | All Operations At One");
@@ -82,11 +88,11 @@ public class GodView extends javax.swing.JFrame {
         BtnIRemove.setText("Abrir \"Eliminar\"");
         BtnIRemove.addActionListener(this::BtnIRemoveActionPerformed);
 
-        btnIGenerate.setText("Generar Iglesia");
-        btnIGenerate.addActionListener(this::btnIGenerateActionPerformed);
+        btnIChoose.setText("Obtener una Iglesia");
+        btnIChoose.addActionListener(this::btnIChooseActionPerformed);
 
-        btnSIGenerate.setText("Generar Socios");
-        btnSIGenerate.addActionListener(this::btnSIGenerateActionPerformed);
+        btnShowITbl.setText("Mostrar tabla de Iglesias");
+        btnShowITbl.addActionListener(this::btnShowITblActionPerformed);
 
         javax.swing.GroupLayout iglesiasPanelLayout = new javax.swing.GroupLayout(iglesiasPanel);
         iglesiasPanel.setLayout(iglesiasPanelLayout);
@@ -100,13 +106,13 @@ public class GodView extends javax.swing.JFrame {
                     .addGroup(iglesiasPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(iglesiasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnIGenerate)
+                            .addComponent(btnIChoose)
                             .addComponent(BtnIRemove)
                             .addComponent(btnIUpdate)
                             .addComponent(btnISave)))
                     .addGroup(iglesiasPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnSIGenerate)))
+                        .addComponent(btnShowITbl)))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
         iglesiasPanelLayout.setVerticalGroup(
@@ -121,9 +127,9 @@ public class GodView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BtnIRemove)
                 .addGap(18, 18, 18)
-                .addComponent(btnIGenerate)
+                .addComponent(btnIChoose)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSIGenerate)
+                .addComponent(btnShowITbl)
                 .addContainerGap(79, Short.MAX_VALUE))
         );
 
@@ -134,7 +140,7 @@ public class GodView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(iglesiasPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -165,83 +171,67 @@ public class GodView extends javax.swing.JFrame {
         iv.setVisible(true);
     }//GEN-LAST:event_BtnIRemoveActionPerformed
 
-    private void btnIGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIGenerateActionPerformed
-        testIg = new IglesiaDTO();
-        
-        testIg.setId(1L);
-        testIg.setNombre("Primera Iglesia Obregon");
-        testIg.setSaldo(50000d);
-        testIg.setPastor("Gildardo Fierro");
-        
-        JOptionPane.showMessageDialog(this, 
-                "Iglesia Creada. \n"
-                + "Nombre: \"" + testIg.getNombre() + "\" \n"
-                + "Saldo: $ " + testIg.getSaldo() + "\n"
-                + "Pastor: \"" + testIg.getPastor() + "\" \n",
-                "GOD | Generar Iglesia",
-                JOptionPane.INFORMATION_MESSAGE
+    private void btnIChooseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIChooseActionPerformed
+        Long chosenId = 0L;
+        String response = JOptionPane.showInputDialog(
+            this,
+            "Ingrese el ID de la iglesia: ",
+            "GOD | Obtener una iglesia",
+            javax.swing.JOptionPane.QUESTION_MESSAGE
         );
-    }//GEN-LAST:event_btnIGenerateActionPerformed
+        
+        if (response != null && !response.trim().isEmpty()) {
+            try {
+                chosenId = Long.valueOf(response.trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Por favor, ingrese un número válido.",
+                    "GOD | Entrada inválida",
+                    javax.swing.JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
 
-    private void btnSIGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSIGenerateActionPerformed
+        testIg = IglesiaDTOMapper.toDto(this.iglesiaRepo.buscarPorId(chosenId));
+        
         if(testIg == null) {
-            JOptionPane.showMessageDialog(this, 
-                "Para asignarle Socios a una iglesia primero debe existir una. \nPor favor, presione \"Generar Iglesia\" para generar una.",
-                "GOD | Generar Socios",
-                JOptionPane.INFORMATION_MESSAGE
+            JOptionPane.showMessageDialog(
+                this,
+                "No hay ninguna Iglesia con ese ID: " + chosenId,
+                "GOD | ID inexistente",
+                javax.swing.JOptionPane.ERROR_MESSAGE
             );
             return;
         }
         
-        List<Socio> sociosIglesia = new ArrayList<>();
+        JOptionPane.showMessageDialog(this, 
+                "Iglesia Obtenida. \n"
+                + "Nombre: \"" + testIg.getNombre() + "\" \n"
+                + "Saldo: $ " + testIg.getSaldo() + "\n"
+                + "Pastor: \"" + testIg.getPastor() + "\" \n",
+                "GOD | Iglesia Obtenida",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }//GEN-LAST:event_btnIChooseActionPerformed
+
+    private void btnShowITblActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowITblActionPerformed
+        List<IglesiaDTO> iglesias = new ArrayList();
         
-//        if(testIg.getSocios() == null) {
-//            sociosIglesia.add(new Socio(
-//                1L,
-//                new NombreCompleto("Gildardo", "Fierro", "Cazares"),
-//                new Date(1000),
-//                true,
-//                testIg
-//            ));
-//
-//            sociosIglesia.add(new Socio(
-//                2L,
-//                new NombreCompleto("Gildardo", "Fierro", "Cazares"),
-//                new Date(1000),
-//                true,
-//                testIg
-//            ));
-//
-//            sociosIglesia.add(new Socio(
-//                3L,
-//                new NombreCompleto("Gildardo", "Fierro", "Cazares"),
-//                new Date(1000),
-//                true,
-//                testIg
-//            ));
-//
-//            testIg.setSocios(sociosIglesia);
-//            
-//            JOptionPane.showMessageDialog(this, 
-//                "Socios para la iglesia creados.",
-//                "GOD | Generar Socios",
-//                JOptionPane.INFORMATION_MESSAGE
-//            );
-//        } else {
-//            JOptionPane.showMessageDialog(this, 
-//                "la iglesia ya cuenta con socios suficientes para probar.",
-//                "GOD | Generar Socios",
-//                JOptionPane.INFORMATION_MESSAGE
-//            );
-//        }
-    }//GEN-LAST:event_btnSIGenerateActionPerformed
+        for (Iglesia iglesia : this.iglesiaRepo.obtenerTodos()) {
+            iglesias.add(IglesiaDTOMapper.toDto(iglesia));
+        }
+        
+        tableView.cargarTablaIglesias(iglesias);
+        tableView.setVisible(true);
+    }//GEN-LAST:event_btnShowITblActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnIRemove;
-    private javax.swing.JButton btnIGenerate;
+    private javax.swing.JButton btnIChoose;
     private javax.swing.JButton btnISave;
     private javax.swing.JButton btnIUpdate;
-    private javax.swing.JButton btnSIGenerate;
+    private javax.swing.JButton btnShowITbl;
     private javax.swing.JPanel iglesiasPanel;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables

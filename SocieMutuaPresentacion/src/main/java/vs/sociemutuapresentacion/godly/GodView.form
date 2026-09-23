@@ -27,7 +27,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="iglesiasPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="59" max="32767" attributes="0"/>
+              <EmptySpace pref="23" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -66,7 +66,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnIGenerate" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnIChoose" min="-2" max="-2" attributes="0"/>
                               <Component id="BtnIRemove" min="-2" max="-2" attributes="0"/>
                               <Component id="btnIUpdate" min="-2" max="-2" attributes="0"/>
                               <Component id="btnISave" min="-2" max="-2" attributes="0"/>
@@ -74,7 +74,7 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnSIGenerate" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnShowITbl" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace pref="40" max="32767" attributes="0"/>
@@ -93,9 +93,9 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="BtnIRemove" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="btnIGenerate" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnIChoose" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btnSIGenerate" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnShowITbl" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="79" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -137,20 +137,20 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnIRemoveActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btnIGenerate">
+        <Component class="javax.swing.JButton" name="btnIChoose">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Generar Iglesia"/>
+            <Property name="text" type="java.lang.String" value="Obtener una Iglesia"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnIGenerateActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnIChooseActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btnSIGenerate">
+        <Component class="javax.swing.JButton" name="btnShowITbl">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Generar Socios"/>
+            <Property name="text" type="java.lang.String" value="Mostrar tabla de Iglesias"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSIGenerateActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnShowITblActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
