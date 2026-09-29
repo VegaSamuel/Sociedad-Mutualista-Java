@@ -14,13 +14,17 @@ import java.io.IOException;
 public class FirebaseConnectionManager {
     private static boolean inicializado = false;
     
+    /**
+     * Inicializa el servicio de Firebase, para almacenar en la nube.
+     */
     public static void inicializar() {
         if(!inicializado) {
             try {
                 Dotenv env = Dotenv.configure().directory("../SocieMutuaPersistencia").load();
                 FileInputStream serviceAccount = new FileInputStream(env.get("FIREBASE_CREDENTIALS_PATH"));
                 
-                FirebaseOptions options = FirebaseOptions.builder()
+                FirebaseOptions options = FirebaseOptions
+                    .builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setProjectId(env.get("FIREBASE_PROJECT_ID"))
                     .build();

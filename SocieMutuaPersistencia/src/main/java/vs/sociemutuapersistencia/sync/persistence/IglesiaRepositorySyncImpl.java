@@ -24,7 +24,7 @@ public class IglesiaRepositorySyncImpl implements IIglesiaRepository {
     }
 
     @Override
-    public void guardar(Iglesia iglesia) throws PersistenceException {
+    public Iglesia guardar(Iglesia iglesia) throws PersistenceException {
         localRepo.guardar(iglesia);
         
         new Thread(() -> {
@@ -34,6 +34,8 @@ public class IglesiaRepositorySyncImpl implements IIglesiaRepository {
                 this.guardarEnColaDeSincronizacion(iglesia.getId(), "INSERT");
             }
         }).start();
+        
+        return iglesia;
     }
 
     @Override
@@ -68,6 +70,12 @@ public class IglesiaRepositorySyncImpl implements IIglesiaRepository {
         }).start();
     }
     
+    /**
+     * Cuando una operacion no se pudo realizar por falta de internet.
+     * Localmente se almacenan las operaciones que son pendientes de hacer cuando se restablezca.
+     * @param entidadId Entidad sobre la cual se hara la operacion.
+     * @param accion Operacion que realizar en la entidad.
+     */
     private void guardarEnColaDeSincronizacion(Long entidadId, String accion) {
         System.out.println("Guardado en cola para reintento: " + accion + " - ID: " + entidadId);
         

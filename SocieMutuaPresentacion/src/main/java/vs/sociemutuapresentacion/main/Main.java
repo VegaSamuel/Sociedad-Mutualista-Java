@@ -1,6 +1,7 @@
 package vs.sociemutuapresentacion.main;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import static java.awt.EventQueue.invokeLater;
 import vs.sociemutuadominio.interfaces.IIglesiaRepository;
 import vs.sociemutuadominio.interfaces.IMensualidadRepository;
 import vs.sociemutuadominio.interfaces.ISocioRepository;
@@ -22,7 +23,9 @@ import vs.sociemutuapresentacion.utils.InitialLoader;
 public class Main {
 
     public static void main(String[] args) {
+        // Le da estilo al aplicacion
         FlatDarkLaf.setup();
+        // Inicia la base de datos de Firebase
         FirebaseConnectionManager.inicializar();
         
         ISocioRepository localSocio = new SocioRepositoryImpl();
@@ -32,16 +35,16 @@ public class Main {
         IMensualidadRepository localMensualidad = new MensualidadRepositoryImpl();
         IMensualidadRepository cloudMensualidad = new MensualidadRepositoryFirebaseImpl();
         
-        SyncMotor motor = new SyncMotor(localSocio, cloudSocio, localIglesia, cloudIglesia, localMensualidad, cloudMensualidad);
-        motor.iniciarSincronizacionAutomatica();
-        
+        // Verifica que las bases de datos no esten vacias
         StartSyncVerifier verificator = new StartSyncVerifier(localSocio, cloudSocio, localIglesia, cloudIglesia, localMensualidad, cloudMensualidad);
         
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-               new InitialLoader(verificator).setVisible(true);
-            }
+        SyncMotor motor = new SyncMotor(localSocio, cloudSocio, localIglesia, cloudIglesia, localMensualidad, cloudMensualidad);
+        // Prepara el motor para sincronizar las bases de datos
+        motor.iniciarSincronizacionAutomatica();
+
+        invokeLater(() -> {
+            // Muestra la ventana de carga, en lo que se realiza la sincronizacion
+            new InitialLoader(verificator).setVisible(true);
         });
     }
 }

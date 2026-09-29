@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import static org.mockito.Mockito.mockStatic;
@@ -54,6 +55,11 @@ public class SocioRepositoryImplTest {
         try(MockedStatic<ConnectionManager> managerMock = mockStatic(ConnectionManager.class)) {
             // Arrange
             managerMock.when(ConnectionManager::getConnection).thenReturn(connectionMock);
+            
+            when(connectionMock.prepareStatement(anyString(), eq(java.sql.Statement.RETURN_GENERATED_KEYS))).thenReturn(statementMock);
+            when(statementMock.getGeneratedKeys()).thenReturn(resultSetMock);
+            when(resultSetMock.next()).thenReturn(true);
+            when(resultSetMock.getLong(1)).thenReturn(99L);
             
             instance = new SocioRepositoryImpl();
             

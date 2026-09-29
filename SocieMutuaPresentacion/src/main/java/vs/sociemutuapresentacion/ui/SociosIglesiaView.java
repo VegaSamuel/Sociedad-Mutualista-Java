@@ -1,32 +1,64 @@
 package vs.sociemutuapresentacion.ui;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import vs.sociemutuadominio.interfaces.ISocioRepository;
 import vs.sociemutuadominio.models.Socio;
 import vs.sociemutuadto.dto.IglesiaDTO;
+import vs.sociemutuadto.dto.SocioDTO;
+import vs.sociemutuadto.mapper.SocioDTOMapper;
+import vs.sociemutuapersistencia.persistence.SocioRepositoryImpl;
+import vs.sociemutuapresentacion.enums.Operations;
 
 /**
- *
+ * Ventana intermediaria entre Iglesias y Socios, para asignar los socios pertenecientes a una iglesia.
  * @author Samuel Vega
  */
 public class SociosIglesiaView extends javax.swing.JFrame {
-    private DefaultListModel<Socio> sociosList;
-    private IglesiaDTO iglesia;
+    private final ISocioRepository socioRepo;
+    private final DefaultListModel<SocioDTO> sociosList = new DefaultListModel<>();
+    private final IglesiaDTO iglesia;
+    private final Operations operacion;
 
     /**
      * Creates new form SociosIglesiaView
-     * @param iglesia Objeto iglesia que se 
-     * @param nombreIglesia Nombre de la iglesia que va a visualizarse
+     * @param iglesia Objeto iglesia.
+     * @param operacion Operacion que se va a realizar.
      */
-    public SociosIglesiaView(IglesiaDTO iglesia, String nombreIglesia) {
+    public SociosIglesiaView(IglesiaDTO iglesia, Operations operacion) {
+        this.socioRepo = new SocioRepositoryImpl();
         this.iglesia = iglesia;
+        this.operacion = operacion;
         
         initComponents();
         
-        this.lblInfo.setText("Socios | " + nombreIglesia);
+        this.lblInfo.setText("Socios | " + iglesia.getNombre());
+        this.chbxPaga.setEnabled(false);
+        
+        if(iglesia.hasSocios()) llenarListaSocios();
     }
     
     private void llenarListaSocios() {
+        this.sociosList.clear();
+        List<Socio> socios = new ArrayList<>();
         
+        if(operacion.equals(Operations.ASIGNACION)) {
+            for (SocioDTO socio : iglesia.getSocios()) {
+                socios.add(SocioDTOMapper.toEntity(socio));
+            }
+        }else if(operacion.equals(Operations.GUARDAR)) {
+            socios = socioRepo.obtenerTodosPorIglesia(iglesia.getId());
+        }
+        
+        for (Socio socio : socios) {
+            this.sociosList.addElement(SocioDTOMapper.toDto(socio));
+        }
+    }
+    
+    public void actualizarLista() {
+        this.llenarListaSocios();
     }
 
     /**
@@ -44,54 +76,52 @@ public class SociosIglesiaView extends javax.swing.JFrame {
         chbxPaga = new javax.swing.JCheckBox();
         btnAdd = new javax.swing.JButton();
         btnSubstract = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         lblInfo.setText("Socios | ");
 
         lSocios.setModel(this.sociosList);
+        lSocios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lSociosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(lSocios);
 
         chbxPaga.setText("Paga");
+        chbxPaga.addActionListener(this::chbxPagaActionPerformed);
 
         btnAdd.setText("+");
+        btnAdd.addActionListener(this::btnAddActionPerformed);
 
         btnSubstract.setText("-");
-
-        jButton3.setText("Aceptar");
+        btnSubstract.addActionListener(this::btnSubstractActionPerformed);
 
         btnCancelar.setText("Volver");
+        btnCancelar.addActionListener(this::btnCancelarActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(lblInfo)))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(chbxPaga)
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(btnAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnSubstract))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(chbxPaga)
-                                .addGap(18, 18, Short.MAX_VALUE)
-                                .addComponent(btnAdd)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnSubstract))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnCancelar)
-                                .addGap(86, 86, 86)
-                                .addComponent(jButton3)))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblInfo)
+                            .addComponent(btnCancelar))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -107,9 +137,7 @@ public class SociosIglesiaView extends javax.swing.JFrame {
                     .addComponent(btnAdd)
                     .addComponent(btnSubstract))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(btnCancelar))
+                .addComponent(btnCancelar)
                 .addContainerGap())
         );
 
@@ -117,14 +145,57 @@ public class SociosIglesiaView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        SocioView sv = new SocioView(this.iglesia, null, Operations.ASIGNACION, this);
+        sv.setVisible(true);
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnSubstractActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubstractActionPerformed
+        SocioDTO socio = this.lSocios.getSelectedValue();
+        
+        if(socio == null) return;
+        
+        int response = JOptionPane.showConfirmDialog(this, "¿Seguro que desea remover al socio: \"" + socio.getNombreCompleto() + "\"?", "Iglesia - Socios | Remover Socio", JOptionPane.YES_NO_OPTION);
+        
+        if(response == 0) {
+            this.iglesia.removeSocio(socio);
+            this.actualizarLista();
+            
+            JOptionPane.showMessageDialog(
+                this, 
+                "El socio se removio exitosamente.",
+                "Iglesia - Socios | Socio removido",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+    }//GEN-LAST:event_btnSubstractActionPerformed
+
+    private void lSociosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lSociosMouseClicked
+        if(!this.lSocios.isSelectionEmpty()) {
+            this.chbxPaga.setEnabled(true);
+            this.chbxPaga.setSelected(this.lSocios.getSelectedValue().isPaga());
+        } else {
+            this.chbxPaga.setEnabled(false);
+        }
+    }//GEN-LAST:event_lSociosMouseClicked
+
+    private void chbxPagaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chbxPagaActionPerformed
+        int socioIndex = this.sociosList.indexOf(this.lSocios.getSelectedValue());
+        this.iglesia.getSocios().get(socioIndex).setPaga(this.chbxPaga.isSelected());
+        this.actualizarLista();
+    }//GEN-LAST:event_chbxPagaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSubstract;
     private javax.swing.JCheckBox chbxPaga;
-    private javax.swing.JButton jButton3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList<Socio> lSocios;
+    private javax.swing.JList<SocioDTO> lSocios;
     private javax.swing.JLabel lblInfo;
     // End of variables declaration//GEN-END:variables
 }

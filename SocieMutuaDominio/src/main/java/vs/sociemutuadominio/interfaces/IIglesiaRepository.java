@@ -13,8 +13,9 @@ public interface IIglesiaRepository {
     /**
      * Guarda una iglesia en la base de datos.
      * @param iglesia Iglesia a guardar.
+     * @return Iglesia guardada.
      */
-    void guardar(Iglesia iglesia) throws PersistenceException;
+    Iglesia guardar(Iglesia iglesia) throws PersistenceException;
     
     /**
      * Busca una iglesia en la base de datos.

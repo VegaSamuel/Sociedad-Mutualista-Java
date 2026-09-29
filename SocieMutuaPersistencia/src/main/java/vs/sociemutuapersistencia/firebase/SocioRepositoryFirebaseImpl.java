@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import vs.sociemutuadominio.exceptions.PersistenceException;
 import vs.sociemutuadominio.interfaces.ISocioRepository;
 import vs.sociemutuadominio.models.Iglesia;
@@ -16,12 +17,12 @@ import vs.sociemutuadominio.models.Socio;
 
 /**
  * Esta clase se encarga de la persistencia de los socios en la base de datos en Firebase.
- * @author samue
+ * @author Samuel Vega
  */
 public class SocioRepositoryFirebaseImpl implements ISocioRepository {
 
     @Override
-    public void guardar(Socio socio) throws PersistenceException {
+    public Socio guardar(Socio socio) throws PersistenceException {
         Firestore db = FirestoreClient.getFirestore();
         Map<String, Object> docData = new HashMap<>();
         
@@ -35,7 +36,8 @@ public class SocioRepositoryFirebaseImpl implements ISocioRepository {
         
         try {
             db.collection("socios").document(String.valueOf(socio.getId())).set(docData).get();
-        } catch(Exception e) {
+            return socio;
+        } catch(InterruptedException | ExecutionException e) {
             throw new PersistenceException("Error de conexion con Firebase");
         }
     }
@@ -72,7 +74,7 @@ public class SocioRepositoryFirebaseImpl implements ISocioRepository {
             }
             
             return socios;
-        }catch(Exception e) {
+        }catch(InterruptedException | ExecutionException e) {
             throw new PersistenceException("Error al descargar el respaldo de Socios: " + e.getMessage());
         }
     }
@@ -84,5 +86,8 @@ public class SocioRepositoryFirebaseImpl implements ISocioRepository {
     public void eliminar(Long id) throws PersistenceException {
         FirestoreClient.getFirestore().collection("socios").document(String.valueOf(id)).delete();
     }
+
+    @Override
+    public List<Socio> obtenerTodosPorIglesia(Long iglesiaId) { return null; }
     
 }

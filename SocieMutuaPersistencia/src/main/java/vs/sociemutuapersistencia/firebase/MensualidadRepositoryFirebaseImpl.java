@@ -8,6 +8,7 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import vs.sociemutuadominio.exceptions.PersistenceException;
 import vs.sociemutuadominio.interfaces.IMensualidadRepository;
 import vs.sociemutuadominio.models.Iglesia;
@@ -20,7 +21,7 @@ import vs.sociemutuadominio.models.Mensualidad;
 public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository {
 
     @Override
-    public void guardar(Mensualidad mensualidad) throws PersistenceException {
+    public Mensualidad guardar(Mensualidad mensualidad) throws PersistenceException {
         Firestore db = FirestoreClient.getFirestore();
         Map<String, Object> docData = new HashMap<>();
         
@@ -37,7 +38,8 @@ public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository
         
         try {
             db.collection("mensualidades").document(String.valueOf(mensualidad.getId())).set(docData).get();
-        } catch(Exception e) {
+            return mensualidad;
+        } catch(InterruptedException | ExecutionException e) {
             throw new PersistenceException("Error de conexion con Firebase");
         }
     }
@@ -75,7 +77,7 @@ public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository
             }
             
             return mensualidades;
-        }catch(Exception e) {
+        }catch(InterruptedException | ExecutionException e) {
             throw new PersistenceException("Error al descargar el respaldo de Socios: " + e.getMessage());
         }
     }

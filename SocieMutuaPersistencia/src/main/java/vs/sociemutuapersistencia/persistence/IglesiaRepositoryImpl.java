@@ -26,7 +26,7 @@ public class IglesiaRepositoryImpl implements IIglesiaRepository {
     }
 
     @Override
-    public void guardar(Iglesia iglesia) throws PersistenceException {
+    public Iglesia guardar(Iglesia iglesia) throws PersistenceException {
         String sql = "INSERT INTO iglesias(nombre, saldo, pastor) VALUES (?, ?, ?)";
         
         try(PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -40,6 +40,8 @@ public class IglesiaRepositoryImpl implements IIglesiaRepository {
                     iglesia.setId(generatedKeys.getLong(1));
                 }
             }
+            
+            return iglesia;
         }catch(Exception e) {
             throw new PersistenceException("Error al guardar una iglesia: " + e.getMessage());
         }

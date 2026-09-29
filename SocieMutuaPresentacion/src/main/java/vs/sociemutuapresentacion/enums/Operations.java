@@ -7,5 +7,6 @@ package vs.sociemutuapresentacion.enums;
 public enum Operations {
     GUARDAR,
     ACTUALIZAR,
-    ELIMINAR
+    ELIMINAR,
+    ASIGNACION
 }

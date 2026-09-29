@@ -13,8 +13,9 @@ public interface IMensualidadRepository {
     /**
      * Guarda una mensualidad en la base de datos.
      * @param mensualidad Mensualidad a guardar.
+     * @return Mensualidad guardada.
      */
-    void guardar(Mensualidad mensualidad) throws PersistenceException;
+    Mensualidad guardar(Mensualidad mensualidad) throws PersistenceException;
     
     /**
      * Busca una mensualidad en la base de datos.

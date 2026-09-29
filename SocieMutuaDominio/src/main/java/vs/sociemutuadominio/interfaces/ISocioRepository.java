@@ -13,8 +13,9 @@ public interface ISocioRepository {
     /**
      * Guarda un socio en la base de datos.
      * @param socio Socio a guardar.
+     * @return Socio guardado.
      */
-    void guardar(Socio socio) throws PersistenceException;
+    Socio guardar(Socio socio) throws PersistenceException;
     
     /**
      * Busca un socio en la base de datos.
@@ -40,5 +41,12 @@ public interface ISocioRepository {
      * @param id ID del socio a eliminar.
      */
     void eliminar(Long id) throws PersistenceException;
+    
+    /**
+     * Recupera todos los socios registrados en una iglesia.
+     * @param iglesiaId ID de la iglesia a que pertenecen.
+     * @return Los socios registrados en una iglesia.
+     */
+    public List<Socio> obtenerTodosPorIglesia(Long iglesiaId);
     
 }

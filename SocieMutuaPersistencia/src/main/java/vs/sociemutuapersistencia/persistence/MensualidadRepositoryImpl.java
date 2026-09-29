@@ -3,6 +3,7 @@ package vs.sociemutuapersistencia.persistence;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import vs.sociemutuadominio.exceptions.PersistenceException;
@@ -25,10 +26,10 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
     }
     
     @Override
-    public void guardar(Mensualidad mensualidad) throws PersistenceException {
+    public Mensualidad guardar(Mensualidad mensualidad) throws PersistenceException {
         String sql = "INSERT INTO mensualidades(mes, anio, cuota, abonos, fecha_creacion, socios_pagan, defunciones, cargos, id_iglesia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
-        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try(PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, mensualidad.getMes());
             stmt.setString(2, mensualidad.getAnio());
             stmt.setDouble(3, mensualidad.getCuota());
@@ -39,6 +40,14 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
             stmt.setDouble(8, mensualidad.getCargos());
             stmt.setLong(9, mensualidad.getIglesia().getId());
             stmt.executeUpdate();
+            
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    mensualidad.setId(generatedKeys.getLong(1));
+                }
+            }
+            
+            return mensualidad;
         }catch(Exception e) {
             throw new PersistenceException("Error al guardar una mensualidad");
         }

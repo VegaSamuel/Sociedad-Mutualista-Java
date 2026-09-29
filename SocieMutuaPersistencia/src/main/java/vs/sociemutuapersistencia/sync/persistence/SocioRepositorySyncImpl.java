@@ -24,7 +24,7 @@ public class SocioRepositorySyncImpl implements ISocioRepository {
     }
 
     @Override
-    public void guardar(Socio socio) throws PersistenceException {
+    public Socio guardar(Socio socio) throws PersistenceException {
         localRepo.guardar(socio);
         
         new Thread(() -> {
@@ -34,6 +34,8 @@ public class SocioRepositorySyncImpl implements ISocioRepository {
                 this.guardarEnColaDeSincronizacion(socio.getId(), "INSERT");
             }
         }).start();
+        
+        return socio;
     }
 
     @Override
@@ -80,4 +82,8 @@ public class SocioRepositorySyncImpl implements ISocioRepository {
             System.out.println(e.getMessage());
         }
     }
+
+    @Override
+    public List<Socio> obtenerTodosPorIglesia(Long iglesiaId) { return localRepo.obtenerTodosPorIglesia(iglesiaId); }
+    
 }

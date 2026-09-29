@@ -13,6 +13,12 @@ import vs.sociemutuadto.dto.SocioDTO;
  */
 public class TableManager {
     
+    /**
+     * Modifica una tabla conforme a lo brindado.
+     * @param tabla Tabla que se modificara.
+     * @param entidad Entidad que se muestra en la tabla.
+     * @param datos Datos que se reflejaran en la tabla.
+     */
     public void cargarDatosEnTabla(JTable tabla, String entidad, List<?> datos) {
         DefaultTableModel modelo = new DefaultTableModel() {
             @Override

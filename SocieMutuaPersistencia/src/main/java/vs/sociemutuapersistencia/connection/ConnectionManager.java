@@ -38,6 +38,10 @@ public class ConnectionManager {
         return con;
     }
     
+    /**
+     * Crea la base de datos en su totalidad.
+     * @param conn Conexion a la base de datos.
+     */
     private static void inicializarEstructura(Connection conn) {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS iglesias (" +

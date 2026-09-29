@@ -1,24 +1,107 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package vs.sociemutuapresentacion.ui;
+
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import vs.sociemutuadto.dto.IglesiaDTO;
+import vs.sociemutuadto.dto.SocioDTO;
+import vs.sociemutuapresentacion.enums.Operations;
 
 /**
  *
  * @author Samuel Vega
  */
 public class SocioView extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SocioView.class.getName());
+    private final Operations operacion;
+    private final SociosIglesiaView siv;
+    private final IglesiaDTO iglesia;
+    private SocioDTO socio;
 
     /**
      * Creates new form SocioView
+     * @param iglesia
+     * @param socio
+     * @param operacion
+     * @param siv
      */
-    public SocioView() {
+    public SocioView(IglesiaDTO iglesia, SocioDTO socio, Operations operacion, SociosIglesiaView siv) {
+        this.iglesia = iglesia;
+        this.socio = socio;
+        this.operacion = operacion;
+        this.siv = siv;
+        
         initComponents();
+        
+        this.manejarElementosVisuales();
+    }
+    
+    private void manejarElementosVisuales() {
+        this.txtIglesia.setEnabled(false);
+        
+        if(operacion.equals(Operations.GUARDAR)) {
+            this.setTitle(this.getTitle() + " | Guardar");
+            this.btnAction.setText("Guardar");
+            this.btnRestaurar.setEnabled(false);
+        }
+        
+        if(operacion.equals(Operations.ACTUALIZAR)) {
+            this.setTitle(this.getTitle() + " | Actualizar");
+            this.btnAction.setText("Actualizar");
+            this.rescatarInformacion();
+        }
+        
+        if(operacion.equals(Operations.ELIMINAR)) {
+            this.setTitle(this.getTitle() + " | Eliminar");
+            this.btnAction.setText("Eliminar");
+            this.btnRestaurar.setVisible(false);
+            
+            this.rescatarInformacion();
+            
+            this.txtNombre.setEnabled(false);
+            this.txtIglesia.setEnabled(false);
+            this.btnSearch.setEnabled(false);
+        }
+        
+        if(operacion.equals(Operations.ASIGNACION)) {
+            this.socio = new SocioDTO();
+            this.setTitle(this.getTitle() + " | Asignar");
+            this.btnAction.setText("Guardar");
+            this.btnSearch.setEnabled(false);
+            this.chbPaga.setSelected(false);
+            
+            this.txtIglesia.setText(iglesia.getNombre());
+        }
     }
 
+    private void rescatarInformacion() {
+        this.txtNombre.setText(socio.getNombreCompleto());
+        this.txtIglesia.setText(socio.getNombreIglesia());
+        this.chbPaga.setSelected(socio.isPaga());
+    }
+    
+    private boolean verificarCampos() {
+        if(this.txtNombre.getText().equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "El socio debe tener un nombre.",
+                "Socio | Campos incompletos",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return false;
+        }
+        
+        if(this.txtIglesia.getText().equalsIgnoreCase("")) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "El socio debe tener una Iglesia.",
+                "Socio | Campos incompletos",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            return false;
+        }
+        
+        return true;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,21 +111,146 @@ public class SocioView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        txtNombre = new javax.swing.JTextField();
+        txtIglesia = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JButton();
+        chbPaga = new javax.swing.JCheckBox();
+        btnAction = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        btnRestaurar = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Socios | ");
+
+        jLabel1.setText("Nombre:");
+
+        jLabel2.setText("Iglesia:");
+
+        btnSearch.setText("...");
+
+        chbPaga.setText("Paga");
+        chbPaga.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                chbPagaMouseClicked(evt);
+            }
+        });
+
+        btnAction.setText("Actualizar");
+        btnAction.addActionListener(this::btnActionActionPerformed);
+
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(this::btnCancelarActionPerformed);
+
+        btnRestaurar.setText("Restaurar");
+        btnRestaurar.addActionListener(this::btnRestaurarActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnCancelar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnRestaurar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnAction))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(chbPaga)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtIglesia, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnSearch))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtNombre)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtIglesia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSearch))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chbPaga)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAction)
+                    .addComponent(btnCancelar)
+                    .addComponent(btnRestaurar))
+                .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        int response = JOptionPane.showConfirmDialog(this, "¿Seguro que desea salir?", "Socio | Cancelar", JOptionPane.YES_NO_OPTION);
+        
+        if(response == 0) dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void chbPagaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chbPagaMouseClicked
+        this.socio.setPaga(this.chbPaga.isSelected());
+    }//GEN-LAST:event_chbPagaMouseClicked
+
+    private void btnActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActionActionPerformed
+        if(!this.verificarCampos()) return;
+        
+        if(this.operacion == Operations.ASIGNACION) {
+            if(!this.iglesia.hasSocios()) {
+                this.iglesia.setSocios(new ArrayList<>());
+            }
+            
+            SocioDTO dto = new SocioDTO();
+            dto.setNombreCompleto(this.txtNombre.getText());
+            dto.setNombreIglesia(this.txtIglesia.getText());
+            dto.setPaga(this.chbPaga.isSelected());
+            
+            this.iglesia.addSocio(dto);
+            
+            this.siv.actualizarLista();
+            
+            JOptionPane.showMessageDialog(
+                this, 
+                "El socio se guardo exitosamente.",
+                "Socios | Socio guardado",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            
+            dispose();
+        }
+    }//GEN-LAST:event_btnActionActionPerformed
+
+    private void btnRestaurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaurarActionPerformed
+        
+    }//GEN-LAST:event_btnRestaurarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAction;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnRestaurar;
+    private javax.swing.JButton btnSearch;
+    private javax.swing.JCheckBox chbPaga;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextField txtIglesia;
+    private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 }

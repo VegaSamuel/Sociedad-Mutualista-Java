@@ -29,6 +29,10 @@ public class StartSyncVerifier {
         this.cloudMensualidadRepo = cloudMensualidadRepo;
     }
     
+    /**
+     * Verifica que alguna de las tablas de la base de datos no este vacia.
+     * Se ejecuta al incio de la aplicacion.
+     */
     public void verificarDatosLocales() {
         try {
             System.out.println("Verificando bases de datos local...");
@@ -41,6 +45,10 @@ public class StartSyncVerifier {
         }
     }
     
+    /**
+     * Verifica los Socios de la base de datos y los restaura si no estan.
+     * @throws Exception Si la conexion sale mal.
+     */
     private void verificarSocios() throws Exception {
         if(localSocioRepo.obtenerTodos().isEmpty()) {
             System.out.println("Base de datos de Socios local vacia. Restaurando desde Firebase...");
@@ -52,6 +60,10 @@ public class StartSyncVerifier {
         }
     }
     
+    /**
+     * Verifica las Iglesias de la base de datos y las restaura si no estan.
+     * @throws Exception Si la conexion sale mal.
+     */
     private void verificarIglesias() throws Exception {
         if(localIglesiaRepo.obtenerTodos().isEmpty()) {
             System.out.println("Base de datos de Iglesias local vacia. Restaurando desde Firebase...");
@@ -62,7 +74,11 @@ public class StartSyncVerifier {
             }
         }
     }
-     
+    
+    /**
+     * Verifica las Mensualidades de la base de datos y los restaura si no estan.
+     * @throws Exception Si la conexion sale mal.
+     */
     private void verificarMensualidades() throws Exception {
         if(localMensualidadRepo.obtenerTodos().isEmpty()) {
             System.out.println("Base de datos de Mensualidades local vacia. Restaurando desde Firebase...");

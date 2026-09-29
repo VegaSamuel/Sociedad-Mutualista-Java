@@ -2,6 +2,7 @@ package vs.sociemutuapresentacion.utils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import static java.awt.EventQueue.invokeLater;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -15,6 +16,10 @@ import vs.sociemutuapresentacion.godly.GodView;
  */
 public class InitialLoader extends JDialog {
     
+    /**
+     * Pantalla inicial de carga para poner todo en orden.
+     * @param verificator Verificador que sincroniza las bases de datos.
+     */
     public InitialLoader(StartSyncVerifier verificator) {
         setUndecorated(true);
         setSize(300, 100);
@@ -28,15 +33,16 @@ public class InitialLoader extends JDialog {
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
-                 verificator.verificarDatosLocales();
-                 return null;
+                verificator.verificarDatosLocales();
+                return null;
             }
             
             @Override
             protected void done() {
                 dispose();
                 
-                java.awt.EventQueue.invokeLater(() -> new GodView().setVisible(true));
+                // Abre la ventana principal
+                invokeLater(() -> new GodView().setVisible(true));
             }
         };
         

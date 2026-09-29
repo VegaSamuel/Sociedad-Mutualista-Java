@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import vs.sociemutuadominio.exceptions.PersistenceException;
 import vs.sociemutuadominio.interfaces.IIglesiaRepository;
 import vs.sociemutuadominio.models.Iglesia;
@@ -18,7 +19,7 @@ import vs.sociemutuadominio.models.Iglesia;
 public class IglesiaRepositoryFirebaseImpl implements IIglesiaRepository {
 
     @Override
-    public void guardar(Iglesia iglesia) throws PersistenceException {
+    public Iglesia guardar(Iglesia iglesia) throws PersistenceException {
         Firestore db = FirestoreClient.getFirestore();
         Map<String, Object> docData = new HashMap<>();
         
@@ -29,7 +30,8 @@ public class IglesiaRepositoryFirebaseImpl implements IIglesiaRepository {
         
         try {
             db.collection("iglesias").document(String.valueOf(iglesia.getId())).set(docData).get();
-        } catch(Exception e) {
+            return iglesia;
+        } catch(InterruptedException | ExecutionException e) {
             throw new PersistenceException("Error de conexion con Firebase");
         }
     }
@@ -57,7 +59,7 @@ public class IglesiaRepositoryFirebaseImpl implements IIglesiaRepository {
             }
             
             return iglesias;
-        }catch(Exception e) {
+        }catch(InterruptedException | ExecutionException e) {
             throw new PersistenceException("Error al descargar el respaldo de Iglesias: " + e.getMessage());
         }
     }

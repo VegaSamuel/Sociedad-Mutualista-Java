@@ -2,11 +2,17 @@ package vs.sociemutuapresentacion.ui;
 
 import javax.swing.JOptionPane;
 import vs.sociemutuadominio.interfaces.IIglesiaRepository;
+import vs.sociemutuadominio.interfaces.ISocioRepository;
 import vs.sociemutuadto.dto.IglesiaDTO;
+import vs.sociemutuadto.dto.SocioDTO;
 import vs.sociemutuadto.mapper.IglesiaDTOMapper;
+import vs.sociemutuadto.mapper.SocioDTOMapper;
 import vs.sociemutuapersistencia.firebase.IglesiaRepositoryFirebaseImpl;
+import vs.sociemutuapersistencia.firebase.SocioRepositoryFirebaseImpl;
 import vs.sociemutuapersistencia.persistence.IglesiaRepositoryImpl;
+import vs.sociemutuapersistencia.persistence.SocioRepositoryImpl;
 import vs.sociemutuapersistencia.sync.persistence.IglesiaRepositorySyncImpl;
+import vs.sociemutuapersistencia.sync.persistence.SocioRepositorySyncImpl;
 import vs.sociemutuapresentacion.enums.Operations;
 
 /**
@@ -15,8 +21,9 @@ import vs.sociemutuapresentacion.enums.Operations;
  */
 public class IglesiaView extends javax.swing.JFrame {
     private final IIglesiaRepository iglesiaRepo;
+    private final ISocioRepository socioRepo;
     private final Operations operacion;
-    private IglesiaDTO iglesia;
+    private final IglesiaDTO iglesia;
 
     /**
      * Creates new form IglesiaView
@@ -27,6 +34,10 @@ public class IglesiaView extends javax.swing.JFrame {
         this.iglesiaRepo = new IglesiaRepositorySyncImpl(
             new IglesiaRepositoryImpl(),
             new IglesiaRepositoryFirebaseImpl()
+        );
+        this.socioRepo = new SocioRepositorySyncImpl(
+            new SocioRepositoryImpl(),
+            new SocioRepositoryFirebaseImpl()
         );
         this.iglesia = iglesia;
         this.operacion = operacion;
@@ -101,7 +112,62 @@ public class IglesiaView extends javax.swing.JFrame {
         
         return true;
     }
+    
+    
+    /**
+     * Muestra un mensaje de error en la pantalla.
+     * @param info Mensaje a mostrar.
+     * @param motivo De donde viene el error (Se muestra en cabecera).
+     */
+    private void mostrarError(String info, String motivo) {
+        JOptionPane.showMessageDialog(
+            this, 
+            info,
+            "Iglesia | " + motivo,
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+    
+    /**
+     * Muestra informacion en la pantalla.
+     * @param info Mensaje a mostrar.
+     * @param motivo De donde viene la informacion (Se muestra en cabecera).
+     */
+    private void mostrarInfo(String info, String motivo) {
+        JOptionPane.showMessageDialog(
+                this, 
+                info,
+                "Iglesia | " + motivo,
+                JOptionPane.INFORMATION_MESSAGE
+            );
+    }
 
+    /**
+     * 
+     * @param mensaje
+     * @param motivo
+     * @return True si confirma, False en caso contrario
+     */
+    private int pedirConfirmacion(String mensaje, String motivo) {
+        int response = JOptionPane.showConfirmDialog(
+            this, 
+            mensaje, 
+            "Iglesia | " + motivo, 
+            JOptionPane.YES_NO_OPTION
+        );
+        
+        return response;
+    }
+    
+    /**
+     * 
+     * @param peticion
+     * @return 
+     */
+    private boolean estaConfirmada(int peticion) {
+        return peticion == 0;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -214,38 +280,44 @@ public class IglesiaView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        int response = JOptionPane.showConfirmDialog(this, "Seguro que desea salir?", "Iglesia | Cancelar", JOptionPane.YES_NO_OPTION);
+        int response = JOptionPane.showConfirmDialog(this, "¿Seguro que desea salir?", "Iglesia | Cancelar", JOptionPane.YES_NO_OPTION);
         
         if(response == 0) dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnRestaurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaurarActionPerformed
-        int response = JOptionPane.showConfirmDialog(this, "Seguro que desea restaurar los valores?", "Iglesia | Restaurar", JOptionPane.YES_NO_OPTION);
+        int response = JOptionPane.showConfirmDialog(this, "¿Seguro que desea restaurar los valores?", "Iglesia | Restaurar", JOptionPane.YES_NO_OPTION);
         
         if(response == 0) this.rescatarInformacion();
     }//GEN-LAST:event_btnRestaurarActionPerformed
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
+        // Verifica que no falten campos para actuar
         if(!verificarCampos()) return;
         
+        // Si hay que guardar
         if(operacion.equals(Operations.GUARDAR)) {
             IglesiaDTO iDto = new IglesiaDTO();
             iDto.setNombre(txtNombre.getText());
             iDto.setPastor(txtPastor.getText());
             iDto.setSaldo(Double.valueOf(txtSaldo.getText()));
+            iDto.setSocios(iglesia.getSocios());
             
-            this.iglesiaRepo.guardar(IglesiaDTOMapper.toIglesia(iDto));
+            IglesiaDTO iGuardada = IglesiaDTOMapper.toDto(this.iglesiaRepo.guardar(IglesiaDTOMapper.toEntity(iDto)));
+            iglesia.setId(iGuardada.getId());
             
-            JOptionPane.showMessageDialog(
-                this, 
-                "La iglesia se guardo exitosamente.",
-                "Iglesias | Iglesia guardada",
-                JOptionPane.INFORMATION_MESSAGE
-            );
+            if(iDto.hasSocios()) {
+                for (SocioDTO socio : iglesia.getSocios()) {
+                    socio.setIglesiaId(iglesia.getId());
+                    this.socioRepo.guardar(SocioDTOMapper.toEntity(socio));
+                }
+            }
             
+            this.mostrarInfo("La iglesia se guardo exitosamente.", "Iglesia guardada");
             dispose();
         }
         
+        // Si hay que actualizar
         if(operacion.equals(Operations.ACTUALIZAR)) {
             IglesiaDTO iDto = new IglesiaDTO();
             iDto.setId(iglesia.getId());
@@ -253,29 +325,24 @@ public class IglesiaView extends javax.swing.JFrame {
             iDto.setPastor(txtPastor.getText());
             iDto.setSaldo(Double.valueOf(txtSaldo.getText()));
             
-            this.iglesiaRepo.actualizar(IglesiaDTOMapper.toIglesia(iDto));
+            this.iglesiaRepo.actualizar(IglesiaDTOMapper.toEntity(iDto));
             
-            JOptionPane.showMessageDialog(
-                this, 
-                "La iglesia se actualizo exitosamente.",
-                "Iglesias | Iglesia actualizada",
-                JOptionPane.INFORMATION_MESSAGE
-            );
+            if(iDto.hasSocios()) {
+                for (SocioDTO socio : iglesia.getSocios()) {
+                    this.socioRepo.actualizar(SocioDTOMapper.toEntity(socio));
+                }
+            }
             
+            this.mostrarInfo("La iglesia se actualizo exitosamente.", "Iglesia actualizada");
             dispose();
         }
         
+        // Si hay que eliminar
         if(operacion.equals(Operations.ELIMINAR)) {
-            int response = JOptionPane.showConfirmDialog(this, "Seguro que desea eliminar la iglesia: \"" + iglesia.getNombre() + "\"?", "Iglesia | Eliminar", JOptionPane.YES_NO_OPTION);
-        
-            if(response == 0) {
+            int peticion = this.pedirConfirmacion("¿Seguro que desea eliminar la iglesia: \"" + iglesia.getNombre() + "\"?", "Eliminar");
+            if(this.estaConfirmada(peticion)) {
                 this.iglesiaRepo.eliminar(iglesia.getId());
-                JOptionPane.showMessageDialog(
-                    this, 
-                    "La iglesia:  \"" + iglesia.getNombre() + "\" se elimino exitosamente.",
-                    "Iglesias | Iglesia eliminada",
-                    JOptionPane.INFORMATION_MESSAGE
-                );
+                this.mostrarInfo("La iglesia:  \"" + iglesia.getNombre() + "\" se elimino exitosamente.", "Iglesia eliminada");
                 dispose();
             }
         }
@@ -292,7 +359,8 @@ public class IglesiaView extends javax.swing.JFrame {
             return;
         }
         
-        SociosIglesiaView siv = new SociosIglesiaView(iglesia, txtNombre.getText());
+        this.iglesia.setNombre(this.txtNombre.getText());
+        SociosIglesiaView siv = new SociosIglesiaView(iglesia, Operations.ASIGNACION);
         siv.setVisible(true);
     }//GEN-LAST:event_btnEditSociosActionPerformed
 

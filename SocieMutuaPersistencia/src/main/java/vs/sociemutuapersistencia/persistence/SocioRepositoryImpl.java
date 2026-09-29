@@ -3,6 +3,7 @@ package vs.sociemutuapersistencia.persistence;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import vs.sociemutuadominio.exceptions.PersistenceException;
@@ -28,10 +29,10 @@ public class SocioRepositoryImpl implements ISocioRepository {
     }
 
     @Override
-    public void guardar(Socio socio) throws PersistenceException {
+    public Socio guardar(Socio socio) throws PersistenceException {
         String sql = "INSERT INTO socios(nombres, apellido_paterno, apellido_materno, fecha_ingreso, paga, iglesia_id) VALUES (?, ?, ?, ?, ?, ?)";
         
-        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try(PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, socio.getNombreCompleto().getNombres());
             stmt.setString(2, socio.getNombreCompleto().getApellidoPaterno());
             stmt.setString(3, socio.getNombreCompleto().getApellidoMaterno());
@@ -39,8 +40,16 @@ public class SocioRepositoryImpl implements ISocioRepository {
             stmt.setBoolean(5, socio.isPaga());
             stmt.setLong(6, socio.getIglesia().getId());
             stmt.executeUpdate();
+            
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    socio.setId(generatedKeys.getLong(1));
+                }
+            }
+            
+            return socio;
         }catch(Exception e) {
-            throw new PersistenceException("Error al guardar un socio");
+            throw new PersistenceException("Error al guardar un socio " + e.getMessage());
         }
     }
 
@@ -109,6 +118,25 @@ public class SocioRepositoryImpl implements ISocioRepository {
         } catch(Exception e) {
             throw new PersistenceException("Error al eliminar al socio con ID: " + id);
         }
+    }
+    
+    @Override
+    public List<Socio> obtenerTodosPorIglesia(Long iglesiaId) {
+        String sql = "SELECT * FROM socios WHERE iglesia_id = ?";
+        List<Socio> socios = new ArrayList<>();
+        
+        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, iglesiaId);
+            ResultSet rs = stmt.executeQuery();
+            
+            while(rs.next()) {
+                socios.add(pm.mapearSocio(rs));
+            }
+        } catch(Exception e) {
+            throw new PersistenceException("Error al consultar la lista de socios");
+        }
+        
+        return socios;
     }
     
 }

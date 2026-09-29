@@ -24,7 +24,7 @@ public class MensualidadRepositorySyncImpl implements IMensualidadRepository {
     }
 
     @Override
-    public void guardar(Mensualidad mensualidad) throws PersistenceException {
+    public Mensualidad guardar(Mensualidad mensualidad) throws PersistenceException {
         localRepo.guardar(mensualidad);
         
         new Thread(() -> {
@@ -34,6 +34,8 @@ public class MensualidadRepositorySyncImpl implements IMensualidadRepository {
                 this.guardarEnColaDeSincronizacion(mensualidad.getId(), "INSERT");
             }
         }).start();
+        
+        return mensualidad;
     }
 
     @Override
