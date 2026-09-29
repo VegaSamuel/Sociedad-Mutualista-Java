@@ -21,14 +21,16 @@ public class SocioDTOMapper {
         
         if(socio.getNombreCompleto() != null) {
             dto.setNombreCompleto(
-                socio.getNombreCompleto().getNombres() +
-                socio.getNombreCompleto().getApellidoPaterno() +
+                socio.getNombreCompleto().getNombres() + " " +
+                socio.getNombreCompleto().getApellidoPaterno() + " " +
                 socio.getNombreCompleto().getApellidoMaterno()
             );
         }
         
-        if(socio.getIglesia() != null) dto.setNombreIglesia(socio.getIglesia().getNombre());
+        dto.setFechaIngreso(socio.getFechaIngreso().toString());
         dto.setPaga(socio.isPaga());
+        
+        if(socio.getIglesia() != null) dto.setNombreIglesia(socio.getIglesia().getNombre());
         
         return dto;
     }
@@ -51,7 +53,7 @@ public class SocioDTOMapper {
         );
         entity.setIglesia(iglesiaId);
         entity.setPaga(dto.isPaga());
-        entity.setFechaIngreso(new Date(0));
+        entity.setFechaIngreso(new Date(System.currentTimeMillis()));
         
         return entity;
     }

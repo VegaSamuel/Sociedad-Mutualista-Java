@@ -19,7 +19,7 @@ import vs.sociemutuapresentacion.enums.Operations;
  * Vista para administrar a las iglesias.
  * @author Samuel Vega
  */
-public class IglesiaView extends javax.swing.JFrame {
+public class IglesiaView extends javax.swing.JDialog {
     private final IIglesiaRepository iglesiaRepo;
     private final ISocioRepository socioRepo;
     private final Operations operacion;
@@ -27,10 +27,14 @@ public class IglesiaView extends javax.swing.JFrame {
 
     /**
      * Creates new form IglesiaView
+     * @param parent Ventana principal que la llamo.
+     * @param modal Define si bloquea la interaccion con mas ventanas.
      * @param iglesia Iglesia que se utilizara en la ventana.
      * @param operacion La operacion que se va a realizar en la ventana actual.
      */
-    public IglesiaView(IglesiaDTO iglesia, Operations operacion) {
+    public IglesiaView(java.awt.Frame parent, boolean modal, IglesiaDTO iglesia, Operations operacion) {
+        super(parent, modal);
+        
         this.iglesiaRepo = new IglesiaRepositorySyncImpl(
             new IglesiaRepositoryImpl(),
             new IglesiaRepositoryFirebaseImpl()
@@ -48,7 +52,7 @@ public class IglesiaView extends javax.swing.JFrame {
     }
     
     private void manejarElementosVisuales() {
-        if(operacion.equals(Operations.GUARDAR)) {
+        if(operacion.equals(Operations.GUARDAR) || operacion.equals(Operations.ASIGNACION)) {
             this.setTitle(this.getTitle() + " | Guardar");
             this.btnAceptar.setText("Guardar");
             this.btnRestaurar.setEnabled(false);
@@ -327,8 +331,9 @@ public class IglesiaView extends javax.swing.JFrame {
             
             this.iglesiaRepo.actualizar(IglesiaDTOMapper.toEntity(iDto));
             
-            if(iDto.hasSocios()) {
+            if(iglesia.hasSocios()) {
                 for (SocioDTO socio : iglesia.getSocios()) {
+                    socio.setIglesiaId(iglesia.getId());
                     this.socioRepo.actualizar(SocioDTOMapper.toEntity(socio));
                 }
             }
@@ -360,7 +365,7 @@ public class IglesiaView extends javax.swing.JFrame {
         }
         
         this.iglesia.setNombre(this.txtNombre.getText());
-        SociosIglesiaView siv = new SociosIglesiaView(iglesia, Operations.ASIGNACION);
+        SociosIglesiaView siv = new SociosIglesiaView(JOptionPane.getFrameForComponent(this), true, iglesia, Operations.ASIGNACION);
         siv.setVisible(true);
     }//GEN-LAST:event_btnEditSociosActionPerformed
 

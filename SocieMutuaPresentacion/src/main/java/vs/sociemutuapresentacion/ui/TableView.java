@@ -8,13 +8,16 @@ import vs.sociemutuapresentacion.utils.TableManager;
  * Esta clase muestra las tablas de cualquiera de las entidades.
  * @author Samuel Vega
  */
-public class TableView extends javax.swing.JFrame {
+public class TableView extends javax.swing.JDialog {
     private final TableManager tm;
 
     /**
      * Creates new form IglesiasListView
+     * @param parent Ventana que abrio este cuadro.
+     * @param modal Si bloquea otras ventanas o no.
      */
-    public TableView() {
+    public TableView(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         this.tm = new TableManager();
         
         initComponents();

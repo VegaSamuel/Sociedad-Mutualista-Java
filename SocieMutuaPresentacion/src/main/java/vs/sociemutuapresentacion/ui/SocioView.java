@@ -10,7 +10,7 @@ import vs.sociemutuapresentacion.enums.Operations;
  *
  * @author Samuel Vega
  */
-public class SocioView extends javax.swing.JFrame {
+public class SocioView extends javax.swing.JDialog {
     private final Operations operacion;
     private final SociosIglesiaView siv;
     private final IglesiaDTO iglesia;
@@ -18,12 +18,16 @@ public class SocioView extends javax.swing.JFrame {
 
     /**
      * Creates new form SocioView
+     * @param parent
+     * @param modal
      * @param iglesia
      * @param socio
      * @param operacion
      * @param siv
      */
-    public SocioView(IglesiaDTO iglesia, SocioDTO socio, Operations operacion, SociosIglesiaView siv) {
+    public SocioView(java.awt.Frame parent, boolean modal, IglesiaDTO iglesia, SocioDTO socio, Operations operacion, SociosIglesiaView siv) {
+        super(parent, true);
+        
         this.iglesia = iglesia;
         this.socio = socio;
         this.operacion = operacion;
@@ -213,6 +217,7 @@ public class SocioView extends javax.swing.JFrame {
     private void btnActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActionActionPerformed
         if(!this.verificarCampos()) return;
         
+        // Agregar socios desde la ventana de crear iglesia.
         if(this.operacion == Operations.ASIGNACION) {
             if(!this.iglesia.hasSocios()) {
                 this.iglesia.setSocios(new ArrayList<>());
@@ -235,6 +240,11 @@ public class SocioView extends javax.swing.JFrame {
             );
             
             dispose();
+        }
+        
+        // Actualizar socios
+        if(this.operacion == Operations.ACTUALIZAR) {
+            
         }
     }//GEN-LAST:event_btnActionActionPerformed
 

@@ -98,4 +98,9 @@ public class IglesiaDTO {
         return Objects.equals(this.id, other.id);
     }
 
+    @Override
+    public String toString() {
+        return nombre;
+    }
+
 }

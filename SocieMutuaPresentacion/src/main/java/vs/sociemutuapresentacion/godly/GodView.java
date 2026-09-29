@@ -33,7 +33,7 @@ public class GodView extends javax.swing.JFrame {
     public GodView() {
         this.iglesiaRepo = new IglesiaRepositoryImpl();
         this.socioRepo = new SocioRepositoryImpl();
-        this.tableView = new TableView();
+        this.tableView = new TableView(this, true);
         this.testIg = null;
         
         initComponents();
@@ -273,19 +273,19 @@ public class GodView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnISaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnISaveActionPerformed
-        IglesiaView iv = new IglesiaView(new IglesiaDTO(), Operations.GUARDAR);
+        IglesiaView iv = new IglesiaView(this, true, new IglesiaDTO(), Operations.GUARDAR);
         iv.setVisible(true);
     }//GEN-LAST:event_btnISaveActionPerformed
 
     private void btnIUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIUpdateActionPerformed
         if(this.faltaEntidadDePrueba("iglesia")) return;
-        IglesiaView iv = new IglesiaView(testIg, Operations.ACTUALIZAR);
+        IglesiaView iv = new IglesiaView(this, true, testIg, Operations.ACTUALIZAR);
         iv.setVisible(true);
     }//GEN-LAST:event_btnIUpdateActionPerformed
 
     private void BtnIRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnIRemoveActionPerformed
         if(this.faltaEntidadDePrueba("iglesia")) return;
-        IglesiaView iv = new IglesiaView(testIg, Operations.ELIMINAR);
+        IglesiaView iv = new IglesiaView(this, true, testIg, Operations.ELIMINAR);
         iv.setVisible(true);
     }//GEN-LAST:event_BtnIRemoveActionPerformed
 

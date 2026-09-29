@@ -16,7 +16,7 @@ import vs.sociemutuapresentacion.enums.Operations;
  * Ventana intermediaria entre Iglesias y Socios, para asignar los socios pertenecientes a una iglesia.
  * @author Samuel Vega
  */
-public class SociosIglesiaView extends javax.swing.JFrame {
+public class SociosIglesiaView extends javax.swing.JDialog {
     private final ISocioRepository socioRepo;
     private final DefaultListModel<SocioDTO> sociosList = new DefaultListModel<>();
     private final IglesiaDTO iglesia;
@@ -24,10 +24,14 @@ public class SociosIglesiaView extends javax.swing.JFrame {
 
     /**
      * Creates new form SociosIglesiaView
+     * @param parent Ventana que solicita este cuadro.
+     * @param modal Si bloquea las demas ventanas o no.
      * @param iglesia Objeto iglesia.
      * @param operacion Operacion que se va a realizar.
      */
-    public SociosIglesiaView(IglesiaDTO iglesia, Operations operacion) {
+    public SociosIglesiaView(java.awt.Frame parent, boolean modal, IglesiaDTO iglesia, Operations operacion) {
+        super(parent, modal);
+        
         this.socioRepo = new SocioRepositoryImpl();
         this.iglesia = iglesia;
         this.operacion = operacion;
@@ -150,7 +154,7 @@ public class SociosIglesiaView extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        SocioView sv = new SocioView(this.iglesia, null, Operations.ASIGNACION, this);
+        SocioView sv = new SocioView(JOptionPane.getFrameForComponent(this), true, this.iglesia, null, Operations.ASIGNACION, this);
         sv.setVisible(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
