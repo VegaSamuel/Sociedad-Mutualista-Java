@@ -17,6 +17,7 @@ public class MensualidadDTO {
     private Long defunciones;
     private Double cargos;
     private String nombreIglesia;
+    private Long iglesiaId;
     
     public MensualidadDTO() {}
 
@@ -98,6 +99,14 @@ public class MensualidadDTO {
 
     public void setNombreIglesia(String nombreIglesia) {
         this.nombreIglesia = nombreIglesia;
+    }
+
+    public Long getIglesiaId() {
+        return iglesiaId;
+    }
+
+    public void setIglesiaId(Long iglesiaId) {
+        this.iglesiaId = iglesiaId;
     }
 
 }

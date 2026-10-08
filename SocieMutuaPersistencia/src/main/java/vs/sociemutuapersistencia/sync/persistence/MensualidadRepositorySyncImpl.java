@@ -82,4 +82,10 @@ public class MensualidadRepositorySyncImpl implements IMensualidadRepository {
             System.out.println(e.getMessage());
         }
     }
+
+    @Override
+    public List<String> obtenerAnios() throws PersistenceException { return localRepo.obtenerAnios(); }
+
+    @Override
+    public List<String> obtenerMesesPorAnio(String anio) throws PersistenceException { return localRepo.obtenerMesesPorAnio(anio); }
 }

@@ -27,7 +27,7 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
     
     @Override
     public Mensualidad guardar(Mensualidad mensualidad) throws PersistenceException {
-        String sql = "INSERT INTO mensualidades(mes, anio, cuota, abonos, fecha_creacion, socios_pagan, defunciones, cargos, id_iglesia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO mensualidades(mes, anio, cuota, abonos, fecha_creacion, socios_pagan, defunciones, cargos, iglesia_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try(PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, mensualidad.getMes());
@@ -49,7 +49,7 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
             
             return mensualidad;
         }catch(Exception e) {
-            throw new PersistenceException("Error al guardar una mensualidad");
+            throw new PersistenceException("Error al guardar una mensualidad" + e.getMessage());
         }
     }
 
@@ -120,6 +120,39 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
         } catch(Exception e) {
             throw new PersistenceException("Error al eliminar la mensualidad con ID: " + id);
         }
+    }
+    
+    @Override
+    public List<String> obtenerAnios() throws PersistenceException {
+        String sql = "SELECT DISTINCT anio FROM mensualidades";
+        List<String> anios = new ArrayList<>();
+        
+        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            
+            while(rs.next()) anios.add(rs.getString("anio"));
+        }catch(Exception e) {
+            throw new PersistenceException("Error al obtener los años");
+        }
+        
+        return anios;
+    }
+    
+    @Override
+    public List<String> obtenerMesesPorAnio(String anio) throws PersistenceException {
+        String sql = "SELECT DISTINCT mes FROM mensualidades WHERE anio = ?";
+        List<String> meses = new ArrayList<>();
+        
+        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, anio);
+            ResultSet rs = stmt.executeQuery();
+            
+            while(rs.next()) meses.add(rs.getString("mes"));
+        }catch(Exception e) {
+            throw new PersistenceException("Error al obtener los meses");
+        }
+        
+        return meses;
     }
     
 }

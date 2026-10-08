@@ -5,7 +5,7 @@ package vs.sociemutuapresentacion.enums;
  * @author Samuel Vega
  */
 public enum Operations {
-    GUARDAR,
+    AGREGAR,
     ACTUALIZAR,
     ELIMINAR,
     ASIGNACION

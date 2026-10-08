@@ -1,6 +1,8 @@
 package vs.sociemutuapresentacion.ui;
 
+import java.awt.Frame;
 import javax.swing.JOptionPane;
+import javax.swing.text.AbstractDocument;
 import vs.sociemutuadominio.interfaces.IIglesiaRepository;
 import vs.sociemutuadominio.interfaces.ISocioRepository;
 import vs.sociemutuadto.dto.IglesiaDTO;
@@ -14,6 +16,7 @@ import vs.sociemutuapersistencia.persistence.SocioRepositoryImpl;
 import vs.sociemutuapersistencia.sync.persistence.IglesiaRepositorySyncImpl;
 import vs.sociemutuapersistencia.sync.persistence.SocioRepositorySyncImpl;
 import vs.sociemutuapresentacion.enums.Operations;
+import vs.sociemutuapresentacion.utils.FiltroDecimales;
 
 /**
  * Vista para administrar a las iglesias.
@@ -32,7 +35,7 @@ public class IglesiaView extends javax.swing.JDialog {
      * @param iglesia Iglesia que se utilizara en la ventana.
      * @param operacion La operacion que se va a realizar en la ventana actual.
      */
-    public IglesiaView(java.awt.Frame parent, boolean modal, IglesiaDTO iglesia, Operations operacion) {
+    public IglesiaView(Frame parent, boolean modal, IglesiaDTO iglesia, Operations operacion) {
         super(parent, modal);
         
         this.iglesiaRepo = new IglesiaRepositorySyncImpl(
@@ -52,7 +55,9 @@ public class IglesiaView extends javax.swing.JDialog {
     }
     
     private void manejarElementosVisuales() {
-        if(operacion.equals(Operations.GUARDAR) || operacion.equals(Operations.ASIGNACION)) {
+        ((AbstractDocument) this.txtSaldo.getDocument()).setDocumentFilter(new FiltroDecimales());
+        
+        if(operacion.equals(Operations.AGREGAR) || operacion.equals(Operations.ASIGNACION)) {
             this.setTitle(this.getTitle() + " | Guardar");
             this.btnAceptar.setText("Guardar");
             this.btnRestaurar.setEnabled(false);
@@ -83,7 +88,7 @@ public class IglesiaView extends javax.swing.JDialog {
         this.txtSaldo.setText(String.valueOf(iglesia.getSaldo()));
     }
     
-    private boolean verificarCampos() {
+    private boolean camposCorrectos() {
         if(this.txtNombre.getText().equalsIgnoreCase("")) {
             JOptionPane.showMessageDialog(
                 this, 
@@ -226,6 +231,7 @@ public class IglesiaView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblIglesia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
@@ -247,10 +253,6 @@ public class IglesiaView extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnAceptar)))))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblIglesia)
-                .addGap(115, 115, 115))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,10 +299,10 @@ public class IglesiaView extends javax.swing.JDialog {
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
         // Verifica que no falten campos para actuar
-        if(!verificarCampos()) return;
+        if(!camposCorrectos()) return;
         
         // Si hay que guardar
-        if(operacion.equals(Operations.GUARDAR)) {
+        if(operacion.equals(Operations.AGREGAR)) {
             IglesiaDTO iDto = new IglesiaDTO();
             iDto.setNombre(txtNombre.getText());
             iDto.setPastor(txtPastor.getText());

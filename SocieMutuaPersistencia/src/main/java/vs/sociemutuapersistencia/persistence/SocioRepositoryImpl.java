@@ -55,7 +55,11 @@ public class SocioRepositoryImpl implements ISocioRepository {
 
     @Override
     public Socio buscarPorId(Long id) throws PersistenceException {
-        String sql = "SELECT * FROM socios WHERE id = ?";
+        String sql = 
+                "SELECT s.*, i.nombre AS iglesia_nombre, i.saldo AS iglesia_saldo, i.pastor AS iglesia_pastor "
+                + "FROM socios s "
+                + "LEFT JOIN iglesias i ON s.iglesia_id = i.id "
+                + "WHERE s.id = ?";
         
         try(PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
@@ -64,6 +68,7 @@ public class SocioRepositoryImpl implements ISocioRepository {
                     return pm.mapearSocio(rs);
             }
         } catch(Exception e) {
+            System.out.println(e.getMessage());
             throw new PersistenceException("Error buscar el socio con ID: " + id);
         }
         
@@ -72,7 +77,10 @@ public class SocioRepositoryImpl implements ISocioRepository {
 
     @Override
     public List<Socio> obtenerTodos() throws PersistenceException {
-        String sql = "SELECT * FROM socios";
+        String sql = 
+                "SELECT s.*, i.nombre AS iglesia_nombre, i.saldo AS iglesia_saldo, i.pastor AS iglesia_pastor "
+                + "FROM socios s "
+                + "LEFT JOIN iglesias i ON s.iglesia_id = i.id ";
         List<Socio> socios = new ArrayList<>();
         
         try(
@@ -122,7 +130,10 @@ public class SocioRepositoryImpl implements ISocioRepository {
     
     @Override
     public List<Socio> obtenerTodosPorIglesia(Long iglesiaId) {
-        String sql = "SELECT * FROM socios WHERE iglesia_id = ?";
+        String sql = "SELECT s.*, i.nombre AS iglesia_nombre, i.saldo AS iglesia_saldo, i.pastor AS iglesia_pastor "
+                + "FROM socios s "
+                + "INNER JOIN iglesias i ON s.iglesia_id = i.id "
+                + "WHERE i.id = ?";
         List<Socio> socios = new ArrayList<>();
         
         try(PreparedStatement stmt = connection.prepareStatement(sql)) {

@@ -2,6 +2,8 @@ package vs.sociemutuapresentacion.main;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import static java.awt.EventQueue.invokeLater;
+import java.awt.Font;
+import javax.swing.UIManager;
 import vs.sociemutuadominio.interfaces.IIglesiaRepository;
 import vs.sociemutuadominio.interfaces.IMensualidadRepository;
 import vs.sociemutuadominio.interfaces.ISocioRepository;
@@ -23,6 +25,8 @@ import vs.sociemutuapresentacion.utils.InitialLoader;
 public class Main {
 
     public static void main(String[] args) {
+        UIManager.put("defaultFont", new Font("Segoe UI", Font.PLAIN, 13));
+        
         // Le da estilo al aplicacion
         FlatDarkLaf.setup();
         // Inicia la base de datos de Firebase

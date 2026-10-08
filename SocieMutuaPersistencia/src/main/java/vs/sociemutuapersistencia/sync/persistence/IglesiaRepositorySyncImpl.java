@@ -90,4 +90,7 @@ public class IglesiaRepositorySyncImpl implements IIglesiaRepository {
             System.out.println(e.getMessage());
         }
     }
+
+    @Override
+    public List<Iglesia> obtenerPorNombre(String nombre) throws PersistenceException { return this.localRepo.obtenerPorNombre(nombre); }
 }

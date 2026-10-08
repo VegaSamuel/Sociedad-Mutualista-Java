@@ -1,7 +1,10 @@
 package vs.sociemutuapresentacion.ui;
 
+import java.awt.Frame;
 import java.util.List;
 import vs.sociemutuadto.dto.IglesiaDTO;
+import vs.sociemutuadto.dto.MensualidadDTO;
+import vs.sociemutuadto.dto.SocioDTO;
 import vs.sociemutuapresentacion.utils.TableManager;
 
 /**
@@ -16,7 +19,7 @@ public class TableView extends javax.swing.JDialog {
      * @param parent Ventana que abrio este cuadro.
      * @param modal Si bloquea otras ventanas o no.
      */
-    public TableView(java.awt.Frame parent, boolean modal) {
+    public TableView(Frame parent, boolean modal) {
         super(parent, modal);
         this.tm = new TableManager();
         
@@ -25,6 +28,14 @@ public class TableView extends javax.swing.JDialog {
     
     public void cargarTablaIglesias(List<IglesiaDTO> iglesias) {
         tm.cargarDatosEnTabla(this.entityTable, "iglesias", iglesias);
+    }
+    
+    public void cargarTablaSocios(List<SocioDTO> socios) {
+        tm.cargarDatosEnTabla(this.entityTable, "socios", socios);
+    }
+    
+    public void cargarTablaMensualidades(List<MensualidadDTO> mensualidades) {
+        tm.cargarDatosEnTabla(this.entityTable, "mensualidades", mensualidades);
     }
 
     /**
@@ -65,18 +76,20 @@ public class TableView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(11, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();

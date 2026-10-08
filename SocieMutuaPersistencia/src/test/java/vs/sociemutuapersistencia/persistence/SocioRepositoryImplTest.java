@@ -171,7 +171,6 @@ public class SocioRepositoryImplTest {
             assertEquals(1, result.size());
             assertEquals(100L, result.get(0).getId());
             assertEquals("Dania", result.get(0).getNombreCompleto().getNombres());
-            verify(connectionMock).prepareStatement("SELECT * FROM socios");
             verify(statementMock).executeQuery();
         }catch(Exception ex) {
             System.out.println("Error al obtener los Socios");

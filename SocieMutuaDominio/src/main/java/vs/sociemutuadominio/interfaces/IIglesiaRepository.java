@@ -42,4 +42,11 @@ public interface IIglesiaRepository {
      */
     void eliminar(Long id) throws PersistenceException;
     
+    /**
+     * Busca las iglesias que concuerden el nombre brindado.
+     * @param nombre Nombre de la iglesia que se busca.
+     * @return Iglesias que concuerdan con el nombre de la buscada.
+     */
+    List<Iglesia> obtenerPorNombre(String nombre) throws PersistenceException;
+    
 }

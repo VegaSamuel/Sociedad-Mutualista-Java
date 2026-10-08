@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import vs.sociemutuapersistencia.sync.StartSyncVerifier;
-import vs.sociemutuapresentacion.godly.GodView;
+import vs.sociemutuapresentacion.ui.MainView;
 
 /**
  * Esta clase se encarga de realizar y mostrar sincronizacion de la base local con la nube.
@@ -42,7 +42,7 @@ public class InitialLoader extends JDialog {
                 dispose();
                 
                 // Abre la ventana principal
-                invokeLater(() -> new GodView().setVisible(true));
+                invokeLater(() -> new MainView().setVisible(true));
             }
         };
         

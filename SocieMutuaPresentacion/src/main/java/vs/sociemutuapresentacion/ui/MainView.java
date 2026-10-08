@@ -1,18 +1,92 @@
 package vs.sociemutuapresentacion.ui;
 
+import java.awt.Color;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import vs.sociemutuadominio.interfaces.IMensualidadRepository;
+import vs.sociemutuadto.dto.IglesiaDTO;
+import vs.sociemutuadto.dto.MensualidadDTO;
+import vs.sociemutuapersistencia.firebase.MensualidadRepositoryFirebaseImpl;
+import vs.sociemutuapersistencia.persistence.MensualidadRepositoryImpl;
+import vs.sociemutuapersistencia.sync.persistence.MensualidadRepositorySyncImpl;
+import vs.sociemutuapresentacion.enums.Operations;
+
 /**
- *
+ * Ventana principal de todo el programa.
  * @author Samuel Vega
  */
 public class MainView extends javax.swing.JFrame {
+    private final IMensualidadRepository mensualidadRepo;
+    private final DefaultListModel<IglesiaDTO> iglesias = new DefaultListModel<>();
+    private final DefaultListModel<String> meses = new DefaultListModel<>();
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainView.class.getName());
-
+    private List<String> anios;
+    
     /**
      * Creates new form MainView
      */
     public MainView() {
+        this.mensualidadRepo = new MensualidadRepositorySyncImpl(
+            new MensualidadRepositoryImpl(),
+            new MensualidadRepositoryFirebaseImpl()
+        );
+        
         initComponents();
+        
+        this.configurarDesign();
+        this.manejarElementosVisuales();
+    }
+    
+    private void manejarElementosVisuales() {
+        this.anios = this.mensualidadRepo.obtenerAnios();
+        
+        if(!anios.isEmpty()) actualizarAnioYMeses(0);
+        else {
+            this.lblAnio.setText("");
+        }
+    }
+    
+    private void configurarDesign() {
+        // Configuraciones para la lista de meses
+        this.lMeses.setFixedCellHeight(25);
+        this.lMeses.setOpaque(false);
+        this.lMeses.setBackground(new Color(30, 41, 34, 0));
+        this.lMeses.putClientProperty("FlatLaf.style", 
+            "selectionArc: 5; " +
+            "selectionInsets: 2,2,2,2;"
+        );
+        
+        this.lIglesias.setFixedCellHeight(25);
+        this.lIglesias.putClientProperty("FlatLaf.style", 
+            "selectionArc: 5; " +
+            "selectionInsets: 2,2,2,2;"
+        );
+        this.jScrollPane1.putClientProperty("FlatLaf.style", "arc: 10;");
+        this.jScrollPane1.getViewport().setOpaque(false);
+        
+        this.btnNext.putClientProperty("JButton.buttonType", "toolBarButton");
+        this.btnPrevious.putClientProperty("JButton.buttonType", "toolBarButton");
+        
+        this.propertiesPanel.putClientProperty("FlatLaf.style", "arc: 10;");
+        this.resumePanel.putClientProperty("FlatLaf.style", "arc: 10;");
+    }
+    
+    private void actualizarAnioYMeses(int posicion) {
+        if(posicion == 0) { 
+            this.btnPrevious.setEnabled(false);
+            this.btnPrevious.setText("");
+        } else this.btnPrevious.setEnabled(true);
+        
+        if(posicion == (this.anios.size() - 1)) { 
+            this.btnNext.setEnabled(false);
+            this.btnNext.setText("");
+        } else this.btnNext.setEnabled(true);
+        
+        this.lblAnio.setText(this.anios.get(posicion));
+        
+        for (String mes : this.mensualidadRepo.obtenerMesesPorAnio(this.anios.get(posicion))) {
+            this.meses.addElement(mes);
+        }
     }
 
     /**
@@ -25,79 +99,83 @@ public class MainView extends javax.swing.JFrame {
     private void initComponents() {
 
         lblAnio = new javax.swing.JLabel();
-        lblReturn = new javax.swing.JLabel();
-        lblNext = new javax.swing.JLabel();
-        jList1 = new javax.swing.JList<>();
+        lMeses = new javax.swing.JList<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList<>();
+        lIglesias = new javax.swing.JList<>();
         jLabel4 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        propertiesPanel = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        resumePanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
+        btnPrevious = new javax.swing.JButton();
+        btnNext = new javax.swing.JButton();
+        btnAgregarMensualidad = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem();
         copyMenuItem = new javax.swing.JMenuItem();
-        pasteMenuItem = new javax.swing.JMenuItem();
-        deleteMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(850, 400));
 
+        lblAnio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAnio.setText("Anio");
 
-        lblReturn.setText("<");
+        lMeses.setModel(meses);
 
-        lblNext.setText(">");
+        lIglesias.setModel(iglesias);
+        jScrollPane1.setViewportView(lIglesias);
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-
-        jList2.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList2);
-
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Iglesias");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 315, Short.MAX_VALUE)
+        propertiesPanel.setBackground(new java.awt.Color(204, 204, 204));
+
+        javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
+        propertiesPanel.setLayout(propertiesPanelLayout);
+        propertiesPanelLayout.setHorizontalGroup(
+            propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        propertiesPanelLayout.setVerticalGroup(
+            propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Propiedades");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 209, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        resumePanel.setBackground(new java.awt.Color(204, 204, 204));
+
+        javax.swing.GroupLayout resumePanelLayout = new javax.swing.GroupLayout(resumePanel);
+        resumePanel.setLayout(resumePanelLayout);
+        resumePanelLayout.setHorizontalGroup(
+            resumePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
+        resumePanelLayout.setVerticalGroup(
+            resumePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 322, Short.MAX_VALUE)
+        );
 
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Resumen");
+
+        btnPrevious.setText("<");
+
+        btnNext.setText(">");
+
+        btnAgregarMensualidad.setText("Agregar Mes");
+        btnAgregarMensualidad.addActionListener(this::btnAgregarMensualidadActionPerformed);
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -114,32 +192,22 @@ public class MainView extends javax.swing.JFrame {
         saveAsMenuItem.setText("Save As ...");
         saveAsMenuItem.setDisplayedMnemonicIndex(5);
         fileMenu.add(saveAsMenuItem);
+        fileMenu.add(jSeparator1);
 
-        exitMenuItem.setMnemonic('x');
-        exitMenuItem.setText("Exit");
+        exitMenuItem.setText("Salir");
+        exitMenuItem.setToolTipText("");
         exitMenuItem.addActionListener(this::exitMenuItemActionPerformed);
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
 
-        editMenu.setMnemonic('e');
-        editMenu.setText("Edit");
+        editMenu.setText("Utilidades");
 
-        cutMenuItem.setMnemonic('t');
-        cutMenuItem.setText("Cambio Pastoral...");
+        cutMenuItem.setText("Cambio Pastoral");
         editMenu.add(cutMenuItem);
 
-        copyMenuItem.setMnemonic('y');
-        copyMenuItem.setText("Copy");
+        copyMenuItem.setText("Reportes");
         editMenu.add(copyMenuItem);
-
-        pasteMenuItem.setMnemonic('p');
-        pasteMenuItem.setText("Paste");
-        editMenu.add(pasteMenuItem);
-
-        deleteMenuItem.setMnemonic('d');
-        deleteMenuItem.setText("Delete");
-        editMenu.add(deleteMenuItem);
 
         menuBar.add(editMenu);
 
@@ -165,26 +233,27 @@ public class MainView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jList1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblReturn)
+                        .addComponent(btnPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblAnio)
+                        .addComponent(lblAnio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblNext)))
-                .addGap(18, 18, 18)
+                        .addComponent(btnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lMeses, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAgregarMensualidad, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
+                    .addComponent(propertiesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                    .addComponent(resumePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,33 +261,44 @@ public class MainView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblAnio)
-                    .addComponent(lblReturn)
-                    .addComponent(lblNext)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel6)
+                    .addComponent(btnPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                    .addComponent(jList1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(resumePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(propertiesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lMeses, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAgregarMensualidad)))
                 .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
+    private void btnAgregarMensualidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarMensualidadActionPerformed
+        MensualidadView mw = new MensualidadView(this, true, new MensualidadDTO(), new IglesiaDTO(), Operations.AGREGAR);
+        mw.setVisible(true);
+    }//GEN-LAST:event_btnAgregarMensualidadActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JButton btnAgregarMensualidad;
+    private javax.swing.JButton btnNext;
+    private javax.swing.JButton btnPrevious;
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
-    private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
@@ -226,17 +306,15 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JList<String> jList2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JList<IglesiaDTO> lIglesias;
+    private javax.swing.JList<String> lMeses;
     private javax.swing.JLabel lblAnio;
-    private javax.swing.JLabel lblNext;
-    private javax.swing.JLabel lblReturn;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
-    private javax.swing.JMenuItem pasteMenuItem;
+    private javax.swing.JPanel propertiesPanel;
+    private javax.swing.JPanel resumePanel;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     // End of variables declaration//GEN-END:variables

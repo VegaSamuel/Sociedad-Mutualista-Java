@@ -1,5 +1,6 @@
 package vs.sociemutuadto.mapper;
 
+import vs.sociemutuadominio.models.Iglesia;
 import vs.sociemutuadominio.models.Mensualidad;
 import vs.sociemutuadto.dto.MensualidadDTO;
 
@@ -26,5 +27,28 @@ public class MensualidadDTOMapper {
         if(mensualidad.getIglesia() != null) dto.setNombreIglesia(mensualidad.getIglesia().getNombre());
         
         return dto;
+    }
+    
+    public static Mensualidad toEntity(MensualidadDTO dto) {
+        if(dto == null) return null;
+        
+        Mensualidad entity = new Mensualidad();
+        
+        Iglesia iglesiaId = new Iglesia();
+        iglesiaId.setId(dto.getIglesiaId());
+        iglesiaId.setNombre(dto.getNombreIglesia());
+        
+        if(dto.getId() != null) entity.setId(dto.getId());
+        entity.setMes(dto.getMes());
+        entity.setAnio(dto.getAnio());
+        entity.setCuota(dto.getCuota());
+        entity.setAbonos(dto.getAbonos());
+        entity.setFechaCreacion(dto.getFechaCreacion());
+        entity.setSociosPagan(dto.getSociosPagan());
+        entity.setDefunciones(dto.getDefunciones());
+        entity.setCargos(dto.getCargos());
+        entity.setIglesia(iglesiaId);
+        
+        return entity;
     }
 }

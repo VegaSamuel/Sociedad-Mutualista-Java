@@ -1,5 +1,6 @@
 package vs.sociemutuapresentacion.ui;
 
+import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -29,7 +30,7 @@ public class SociosIglesiaView extends javax.swing.JDialog {
      * @param iglesia Objeto iglesia.
      * @param operacion Operacion que se va a realizar.
      */
-    public SociosIglesiaView(java.awt.Frame parent, boolean modal, IglesiaDTO iglesia, Operations operacion) {
+    public SociosIglesiaView(Frame parent, boolean modal, IglesiaDTO iglesia, Operations operacion) {
         super(parent, modal);
         
         this.socioRepo = new SocioRepositoryImpl();
@@ -52,7 +53,7 @@ public class SociosIglesiaView extends javax.swing.JDialog {
             for (SocioDTO socio : iglesia.getSocios()) {
                 socios.add(SocioDTOMapper.toEntity(socio));
             }
-        }else if(operacion.equals(Operations.GUARDAR)) {
+        }else if(operacion.equals(Operations.AGREGAR)) {
             socios = socioRepo.obtenerTodosPorIglesia(iglesia.getId());
         }
         

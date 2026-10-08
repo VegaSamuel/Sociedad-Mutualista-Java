@@ -42,4 +42,8 @@ public interface IMensualidadRepository {
      */
     void eliminar(Long id) throws PersistenceException;
     
+    public List<String> obtenerAnios() throws PersistenceException;
+    
+    List<String> obtenerMesesPorAnio(String anio) throws PersistenceException;
+    
 }

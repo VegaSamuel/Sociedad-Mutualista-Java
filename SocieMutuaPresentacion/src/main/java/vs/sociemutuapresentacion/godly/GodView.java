@@ -4,15 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import vs.sociemutuadominio.interfaces.IIglesiaRepository;
+import vs.sociemutuadominio.interfaces.IMensualidadRepository;
 import vs.sociemutuadominio.interfaces.ISocioRepository;
 import vs.sociemutuadominio.models.Iglesia;
+import vs.sociemutuadominio.models.Mensualidad;
+import vs.sociemutuadominio.models.Socio;
 import vs.sociemutuadto.dto.IglesiaDTO;
+import vs.sociemutuadto.dto.MensualidadDTO;
 import vs.sociemutuadto.dto.SocioDTO;
 import vs.sociemutuadto.mapper.IglesiaDTOMapper;
+import vs.sociemutuadto.mapper.MensualidadDTOMapper;
+import vs.sociemutuadto.mapper.SocioDTOMapper;
 import vs.sociemutuapersistencia.persistence.IglesiaRepositoryImpl;
+import vs.sociemutuapersistencia.persistence.MensualidadRepositoryImpl;
 import vs.sociemutuapersistencia.persistence.SocioRepositoryImpl;
 import vs.sociemutuapresentacion.enums.Operations;
 import vs.sociemutuapresentacion.ui.IglesiaView;
+import vs.sociemutuapresentacion.ui.MensualidadView;
+import vs.sociemutuapresentacion.ui.SocioView;
 import vs.sociemutuapresentacion.ui.TableView;
 
 /**
@@ -22,10 +31,12 @@ import vs.sociemutuapresentacion.ui.TableView;
 public class GodView extends javax.swing.JFrame {
     private final IIglesiaRepository iglesiaRepo;
     private final ISocioRepository socioRepo;
+    private final IMensualidadRepository mensualidadRepo;
     private final TableView tableView;
     
     private IglesiaDTO testIg;
-    private List<SocioDTO> testIgSos;
+    private SocioDTO testSo;
+    private MensualidadDTO testMen;
 
     /**
      * Creates new form GodClass
@@ -33,6 +44,7 @@ public class GodView extends javax.swing.JFrame {
     public GodView() {
         this.iglesiaRepo = new IglesiaRepositoryImpl();
         this.socioRepo = new SocioRepositoryImpl();
+        this.mensualidadRepo = new MensualidadRepositoryImpl();
         this.tableView = new TableView(this, true);
         this.testIg = null;
         
@@ -48,6 +60,20 @@ public class GodView extends javax.swing.JFrame {
         if(entidad.equalsIgnoreCase("iglesia")) {
             if(testIg == null) {
                 this.mostrarError("No existe ninguna Iglesia sobre cual probar esta ventana.\nPor favor, presione \"Obtener una Iglesia\" para acceder a esta ventana.", "Cuidado de errores");
+                return true;
+            }
+        }
+        
+        if(entidad.equalsIgnoreCase("socio")) {
+            if(testSo == null) {
+                this.mostrarError("No existe ningun Socio sobre cual probar esta ventana.\nPor favor, presione \"Obtener un Socio\" para acceder a esta ventana.", "Cuidado de errores");
+                return true;
+            }
+        }
+        
+        if(entidad.equalsIgnoreCase("mensualidad")) {
+            if(testMen == null) {
+                this.mostrarError("No existe ninguna Mensualidad sobre cual probar esta ventana.\nPor favor, presione \"Obtener una Mensualidad\" para acceder a esta ventana.", "Cuidado de errores");
                 return true;
             }
         }
@@ -114,13 +140,20 @@ public class GodView extends javax.swing.JFrame {
         BtnIRemove = new javax.swing.JButton();
         btnIChoose = new javax.swing.JButton();
         btnShowITbl = new javax.swing.JButton();
-        iglesiasPanel1 = new javax.swing.JPanel();
+        sociosPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         btnSSave = new javax.swing.JButton();
         btnSUpdate = new javax.swing.JButton();
         BtnSRemove = new javax.swing.JButton();
         btnSChoose = new javax.swing.JButton();
-        btnShowITbl1 = new javax.swing.JButton();
+        btnShowSTbl = new javax.swing.JButton();
+        mensualidadesPanel = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        btnMSave = new javax.swing.JButton();
+        btnMUpdate = new javax.swing.JButton();
+        BtnMRemove = new javax.swing.JButton();
+        btnMChoose = new javax.swing.JButton();
+        btnShowMTbl = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GOD Controls | All Operations At One");
@@ -130,6 +163,7 @@ public class GodView extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Iglesias");
 
         btnISave.setText("Abrir \"Guardar\"");
@@ -152,20 +186,14 @@ public class GodView extends javax.swing.JFrame {
         iglesiasPanelLayout.setHorizontalGroup(
             iglesiasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(iglesiasPanelLayout.createSequentialGroup()
-                .addGroup(iglesiasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(iglesiasPanelLayout.createSequentialGroup()
-                        .addGap(63, 63, 63)
-                        .addComponent(jLabel1))
-                    .addGroup(iglesiasPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(iglesiasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnIChoose)
-                            .addComponent(BtnIRemove)
-                            .addComponent(btnIUpdate)
-                            .addComponent(btnISave)))
-                    .addGroup(iglesiasPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnShowITbl)))
+                .addContainerGap()
+                .addGroup(iglesiasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnIChoose)
+                    .addComponent(BtnIRemove)
+                    .addComponent(btnIUpdate)
+                    .addComponent(btnISave)
+                    .addComponent(btnShowITbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         iglesiasPanelLayout.setVerticalGroup(
@@ -183,14 +211,15 @@ public class GodView extends javax.swing.JFrame {
                 .addComponent(btnIChoose)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnShowITbl)
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        iglesiasPanel1.setBackground(new java.awt.Color(204, 204, 204));
-        iglesiasPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
+        sociosPanel.setBackground(new java.awt.Color(204, 204, 204));
+        sociosPanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Socios");
 
         btnSSave.setText("Abrir \"Guardar\"");
@@ -205,33 +234,27 @@ public class GodView extends javax.swing.JFrame {
         btnSChoose.setText("Obtener un Socio");
         btnSChoose.addActionListener(this::btnSChooseActionPerformed);
 
-        btnShowITbl1.setText("Mostrar tabla de Socios");
-        btnShowITbl1.addActionListener(this::btnShowITbl1ActionPerformed);
+        btnShowSTbl.setText("Mostrar tabla de Socios");
+        btnShowSTbl.addActionListener(this::btnShowSTblActionPerformed);
 
-        javax.swing.GroupLayout iglesiasPanel1Layout = new javax.swing.GroupLayout(iglesiasPanel1);
-        iglesiasPanel1.setLayout(iglesiasPanel1Layout);
-        iglesiasPanel1Layout.setHorizontalGroup(
-            iglesiasPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(iglesiasPanel1Layout.createSequentialGroup()
-                .addGroup(iglesiasPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(iglesiasPanel1Layout.createSequentialGroup()
-                        .addGap(63, 63, 63)
-                        .addComponent(jLabel2))
-                    .addGroup(iglesiasPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(iglesiasPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnSChoose)
-                            .addComponent(BtnSRemove)
-                            .addComponent(btnSUpdate)
-                            .addComponent(btnSSave)))
-                    .addGroup(iglesiasPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnShowITbl1)))
+        javax.swing.GroupLayout sociosPanelLayout = new javax.swing.GroupLayout(sociosPanel);
+        sociosPanel.setLayout(sociosPanelLayout);
+        sociosPanelLayout.setHorizontalGroup(
+            sociosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sociosPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(sociosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnSChoose)
+                    .addComponent(BtnSRemove)
+                    .addComponent(btnSUpdate)
+                    .addComponent(btnSSave)
+                    .addComponent(btnShowSTbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        iglesiasPanel1Layout.setVerticalGroup(
-            iglesiasPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(iglesiasPanel1Layout.createSequentialGroup()
+        sociosPanelLayout.setVerticalGroup(
+            sociosPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sociosPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -243,8 +266,64 @@ public class GodView extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnSChoose)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnShowITbl1)
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addComponent(btnShowSTbl)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        mensualidadesPanel.setBackground(new java.awt.Color(204, 204, 204));
+        mensualidadesPanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Mensualidades");
+
+        btnMSave.setText("Abrir \"Guardar\"");
+        btnMSave.addActionListener(this::btnMSaveActionPerformed);
+
+        btnMUpdate.setText("Abrir \"Actualizar\"");
+        btnMUpdate.addActionListener(this::btnMUpdateActionPerformed);
+
+        BtnMRemove.setText("Abrir \"Eliminar\"");
+        BtnMRemove.addActionListener(this::BtnMRemoveActionPerformed);
+
+        btnMChoose.setText("Obtener una mensualidad");
+        btnMChoose.addActionListener(this::btnMChooseActionPerformed);
+
+        btnShowMTbl.setText("Mostrar tabla de mensualidades");
+        btnShowMTbl.addActionListener(this::btnShowMTblActionPerformed);
+
+        javax.swing.GroupLayout mensualidadesPanelLayout = new javax.swing.GroupLayout(mensualidadesPanel);
+        mensualidadesPanel.setLayout(mensualidadesPanelLayout);
+        mensualidadesPanelLayout.setHorizontalGroup(
+            mensualidadesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mensualidadesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mensualidadesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnMChoose)
+                    .addComponent(BtnMRemove)
+                    .addComponent(btnMUpdate)
+                    .addComponent(btnMSave)
+                    .addComponent(btnShowMTbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        mensualidadesPanelLayout.setVerticalGroup(
+            mensualidadesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mensualidadesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnMSave)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMUpdate)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BtnMRemove)
+                .addGap(18, 18, 18)
+                .addComponent(btnMChoose)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnShowMTbl)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -255,15 +334,18 @@ public class GodView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(iglesiasPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(iglesiasPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(484, Short.MAX_VALUE))
+                .addComponent(sociosPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mensualidadesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(iglesiasPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(mensualidadesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sociosPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(iglesiasPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -273,7 +355,7 @@ public class GodView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnISaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnISaveActionPerformed
-        IglesiaView iv = new IglesiaView(this, true, new IglesiaDTO(), Operations.GUARDAR);
+        IglesiaView iv = new IglesiaView(this, true, new IglesiaDTO(), Operations.AGREGAR);
         iv.setVisible(true);
     }//GEN-LAST:event_btnISaveActionPerformed
 
@@ -300,7 +382,7 @@ public class GodView extends javax.swing.JFrame {
             } catch (NumberFormatException e) {
                 this.mostrarError("Por favor, ingrese un número válido.", "Entrada inválida");
             }
-        }
+        } else return;
 
         // Busca la iglesia en la base de datos
         testIg = IglesiaDTOMapper.toDto(this.iglesiaRepo.buscarPorId(chosenId));
@@ -313,13 +395,10 @@ public class GodView extends javax.swing.JFrame {
         
         // Se asignan los socios a la Iglesia si los hay
         List<SocioDTO> socios = IglesiaDTOMapper.convertSociosToDTOList(this.socioRepo.obtenerTodosPorIglesia(chosenId));
-        testIgSos = new ArrayList<>();
         if(socios != null && !socios.isEmpty()) {
-            for (SocioDTO socio : socios) {
-                testIgSos.add(socio);
-            }
+            testIg.setSocios(socios);
         }
-        testIg.setSocios(testIgSos);        
+            
         
         // Si no se encuentra la iglesia
         if(testIg == null && chosenId != 0) {
@@ -351,39 +430,113 @@ public class GodView extends javax.swing.JFrame {
     }//GEN-LAST:event_btnShowITblActionPerformed
 
     private void btnSSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSSaveActionPerformed
-        // TODO add your handling code here:
+        SocioView sv = new SocioView(this, true, testIg, testSo, Operations.AGREGAR, null);
+        sv.setVisible(true);
     }//GEN-LAST:event_btnSSaveActionPerformed
 
     private void btnSUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSUpdateActionPerformed
-        // TODO add your handling code here:
+        if(this.faltaEntidadDePrueba("socio")) return;
+        SocioView sv = new SocioView(this, true, testIg, testSo, Operations.ACTUALIZAR, null);
+        sv.setVisible(true);
     }//GEN-LAST:event_btnSUpdateActionPerformed
 
     private void BtnSRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSRemoveActionPerformed
-        // TODO add your handling code here:
+        if(this.faltaEntidadDePrueba("socio")) return;
+        SocioView sv = new SocioView(this, true, testIg, testSo, Operations.ELIMINAR, null);
+        sv.setVisible(true);
     }//GEN-LAST:event_BtnSRemoveActionPerformed
 
     private void btnSChooseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSChooseActionPerformed
-        // TODO add your handling code here:
+        Long chosenId = 0L;
+        String response = this.pedirUnDato("Ingrese el ID del socio: ", "Obtener una socio");
+        
+        // Verifica que se haya ingresado un numero
+        if (response != null && !response.trim().isEmpty()) {
+            try {
+                chosenId = Long.valueOf(response.trim());
+            } catch (NumberFormatException e) {
+                this.mostrarError("Por favor, ingrese un número válido.", "Entrada inválida");
+            }
+        } else return;
+        
+        testSo = SocioDTOMapper.toDto(this.socioRepo.buscarPorId(chosenId));
+        
+        if(testSo == null && chosenId != 0) {
+            this.mostrarError("No hay ningun socio con ese ID: " + chosenId, "ID inexistente");
+            return;
+        }
+        
+        if(testSo != null) {
+            this.mostrarInfo(
+                "Socio Obtenido. \n"
+                + "Nombre: \"" + testSo.getNombreCompleto() + "\" \n"
+                + "Fecha de Ingreso: " + testSo.getFechaIngreso() + "\n"
+                + "Iglesia: \"" + testSo.getNombreIglesia() + "\" \n",
+                "Socio Obtenido"
+            );
+        }
     }//GEN-LAST:event_btnSChooseActionPerformed
 
-    private void btnShowITbl1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowITbl1ActionPerformed
+    private void btnShowSTblActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowSTblActionPerformed
+        List<SocioDTO> socios = new ArrayList<>();
+        
+        for (Socio socio : this.socioRepo.obtenerTodos()) {
+            socios.add(SocioDTOMapper.toDto(socio));
+        }
+        
+        tableView.cargarTablaSocios(socios);
+        tableView.setVisible(true);
+    }//GEN-LAST:event_btnShowSTblActionPerformed
+
+    private void btnMSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMSaveActionPerformed
+        MensualidadView mv = new MensualidadView(this, true, new MensualidadDTO(), this.testIg, Operations.AGREGAR);
+        mv.setVisible(true);
+    }//GEN-LAST:event_btnMSaveActionPerformed
+
+    private void btnMUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMUpdateActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnShowITbl1ActionPerformed
+    }//GEN-LAST:event_btnMUpdateActionPerformed
+
+    private void BtnMRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnMRemoveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_BtnMRemoveActionPerformed
+
+    private void btnMChooseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMChooseActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnMChooseActionPerformed
+
+    private void btnShowMTblActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowMTblActionPerformed
+        List<MensualidadDTO> mensualidades = new ArrayList<>();
+        
+        for (Mensualidad mensualidad : this.mensualidadRepo.obtenerTodos()) {
+            mensualidades.add(MensualidadDTOMapper.toDto(mensualidad));
+        }
+        
+        tableView.cargarTablaMensualidades(mensualidades);
+        tableView.setVisible(true);
+    }//GEN-LAST:event_btnShowMTblActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnIRemove;
+    private javax.swing.JButton BtnMRemove;
     private javax.swing.JButton BtnSRemove;
     private javax.swing.JButton btnIChoose;
     private javax.swing.JButton btnISave;
     private javax.swing.JButton btnIUpdate;
+    private javax.swing.JButton btnMChoose;
+    private javax.swing.JButton btnMSave;
+    private javax.swing.JButton btnMUpdate;
     private javax.swing.JButton btnSChoose;
     private javax.swing.JButton btnSSave;
     private javax.swing.JButton btnSUpdate;
     private javax.swing.JButton btnShowITbl;
-    private javax.swing.JButton btnShowITbl1;
+    private javax.swing.JButton btnShowMTbl;
+    private javax.swing.JButton btnShowSTbl;
     private javax.swing.JPanel iglesiasPanel;
-    private javax.swing.JPanel iglesiasPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel mensualidadesPanel;
+    private javax.swing.JPanel sociosPanel;
     // End of variables declaration//GEN-END:variables
 }

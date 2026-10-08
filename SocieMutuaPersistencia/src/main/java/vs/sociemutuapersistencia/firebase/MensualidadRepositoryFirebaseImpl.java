@@ -89,5 +89,15 @@ public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository
     public void eliminar(Long id) throws PersistenceException {
         FirestoreClient.getFirestore().collection("mensualidades").document(String.valueOf(id)).delete();
     }
+
+    @Override
+    public List<String> obtenerAnios() throws PersistenceException {
+        return null;
+    }
+
+    @Override
+    public List<String> obtenerMesesPorAnio(String anio) throws PersistenceException {
+        return null;
+    }
     
 }

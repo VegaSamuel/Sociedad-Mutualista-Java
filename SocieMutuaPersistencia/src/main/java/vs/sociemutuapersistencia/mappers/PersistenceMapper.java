@@ -42,6 +42,9 @@ public class PersistenceMapper {
         
         Iglesia iglesia = new Iglesia();
         iglesia.setId(rs.getLong("iglesia_id"));
+        iglesia.setNombre(rs.getString("iglesia_nombre"));
+        iglesia.setSaldo(rs.getDouble("iglesia_saldo"));
+        iglesia.setPastor(rs.getString("iglesia_pastor"));
         
         return new Socio(
             rs.getLong("id"),

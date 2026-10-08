@@ -1,5 +1,6 @@
 package vs.sociemutuapresentacion.ui;
 
+import java.awt.Frame;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import vs.sociemutuadto.dto.IglesiaDTO;
@@ -25,7 +26,7 @@ public class SocioView extends javax.swing.JDialog {
      * @param operacion
      * @param siv
      */
-    public SocioView(java.awt.Frame parent, boolean modal, IglesiaDTO iglesia, SocioDTO socio, Operations operacion, SociosIglesiaView siv) {
+    public SocioView(Frame parent, boolean modal, IglesiaDTO iglesia, SocioDTO socio, Operations operacion, SociosIglesiaView siv) {
         super(parent, true);
         
         this.iglesia = iglesia;
@@ -41,7 +42,7 @@ public class SocioView extends javax.swing.JDialog {
     private void manejarElementosVisuales() {
         this.txtIglesia.setEnabled(false);
         
-        if(operacion.equals(Operations.GUARDAR)) {
+        if(operacion.equals(Operations.AGREGAR)) {
             this.setTitle(this.getTitle() + " | Guardar");
             this.btnAction.setText("Guardar");
             this.btnRestaurar.setEnabled(false);

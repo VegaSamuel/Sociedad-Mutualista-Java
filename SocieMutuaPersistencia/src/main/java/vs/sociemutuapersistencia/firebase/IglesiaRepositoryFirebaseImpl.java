@@ -71,5 +71,10 @@ public class IglesiaRepositoryFirebaseImpl implements IIglesiaRepository {
     public void eliminar(Long id) throws PersistenceException {
         FirestoreClient.getFirestore().collection("iglesias").document(String.valueOf(id)).delete();
     }
+
+    @Override
+    public List<Iglesia> obtenerPorNombre(String nombre) throws PersistenceException {
+        return null;
+    }
     
 }

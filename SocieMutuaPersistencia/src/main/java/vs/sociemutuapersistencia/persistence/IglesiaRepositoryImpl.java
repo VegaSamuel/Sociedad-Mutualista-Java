@@ -67,20 +67,20 @@ public class IglesiaRepositoryImpl implements IIglesiaRepository {
     @Override
     public List<Iglesia> obtenerTodos() throws PersistenceException {
         String sql = "SELECT * FROM iglesias";
-        List<Iglesia> socios = new ArrayList<>();
+        List<Iglesia> iglesias = new ArrayList<>();
         
         try(
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
         ) {
             while(rs.next()) {
-                socios.add(pm.mapearIglesia(rs));
+                iglesias.add(pm.mapearIglesia(rs));
             }
         } catch(Exception e) {
             throw new PersistenceException("Error al consultar la lista de iglesias");
         }
         
-        return socios;
+        return iglesias;
     }
 
     @Override
@@ -109,6 +109,25 @@ public class IglesiaRepositoryImpl implements IIglesiaRepository {
         } catch(Exception e) {
             throw new PersistenceException("Error al eliminar la iglesia con ID: " + id);
         }
+    }
+
+    @Override
+    public List<Iglesia> obtenerPorNombre(String nombre) throws PersistenceException {
+        String sql = "SELECT * FROM iglesias WHERE nombre LIKE ?";
+        List<Iglesia> iglesias = new ArrayList<>();
+        
+        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + nombre + "%");
+            
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()) {
+                iglesias.add(pm.mapearIglesia(rs));
+            }
+        }catch(Exception e) {
+            throw new PersistenceException("Error al eliminar la iglesia con nombre: " + nombre);
+        }
+        
+        return iglesias;
     }
     
 }
