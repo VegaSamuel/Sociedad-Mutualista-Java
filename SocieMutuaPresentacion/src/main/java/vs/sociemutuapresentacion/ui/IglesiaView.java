@@ -1,6 +1,8 @@
 package vs.sociemutuapresentacion.ui;
 
 import java.awt.Frame;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 import vs.sociemutuadominio.interfaces.IIglesiaRepository;
@@ -52,8 +54,12 @@ public class IglesiaView extends javax.swing.JDialog {
         initComponents();
         
         this.manejarElementosVisuales();
+        this.configurarDesign();
     }
     
+    /**
+     * Maneja los elementos visuales de la ventana
+     */
     private void manejarElementosVisuales() {
         ((AbstractDocument) this.txtSaldo.getDocument()).setDocumentFilter(new FiltroDecimales());
         
@@ -80,6 +86,30 @@ public class IglesiaView extends javax.swing.JDialog {
             this.txtSaldo.setEnabled(false);
             this.txtNombre.setEnabled(false);
         }
+    }
+    
+    /**
+     * Configua el diseno de los componentes de la ventaña.
+     */
+    private void configurarDesign() {
+        this.txtNombre.putClientProperty("FlatLaf.style", "arc: 10;");
+        this.txtPastor.putClientProperty("FlatLaf.style", "arc: 10;");
+        this.txtSaldo.putClientProperty("FlatLaf.style", "arc: 10;");
+        this.txtSaldo.addFocusListener(new FocusAdapter() {
+           @Override
+           public void focusLost(FocusEvent e) {
+               String texto = txtSaldo.getText().trim();
+
+               if(!texto.isEmpty()) {
+                   try {
+                       double valor = Double.parseDouble(texto);
+                       txtSaldo.setText(String.format(java.util.Locale.US, "%.2f", valor));
+                   } catch(NumberFormatException ex) {
+                       System.out.println("Valor ingresado no es un numero valido");
+                   }
+               }
+           }
+        });
     }
     
     private void rescatarInformacion() {
@@ -152,10 +182,10 @@ public class IglesiaView extends javax.swing.JDialog {
     }
 
     /**
-     * 
-     * @param mensaje
-     * @param motivo
-     * @return True si confirma, False en caso contrario
+     * Muestra un dialogo que pide confirmacion al usuario.
+     * @param mensaje Mensaje que vendra en el dialogo.
+     * @param motivo Motivo de la peticion.
+     * @return La respuesta del usuario.
      */
     private int pedirConfirmacion(String mensaje, String motivo) {
         int response = JOptionPane.showConfirmDialog(
@@ -169,9 +199,9 @@ public class IglesiaView extends javax.swing.JDialog {
     }
     
     /**
-     * 
-     * @param peticion
-     * @return 
+     * Este metodo verifica que el usuario haya confirmado una peticion.
+     * @param peticion Valor recibido de la peticion.
+     * @return True si confirmo, False en caso contrario.
      */
     private boolean estaConfirmada(int peticion) {
         return peticion == 0;

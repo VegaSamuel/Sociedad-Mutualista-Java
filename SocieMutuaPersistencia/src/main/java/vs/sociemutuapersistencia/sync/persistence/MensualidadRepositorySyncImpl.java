@@ -43,6 +43,12 @@ public class MensualidadRepositorySyncImpl implements IMensualidadRepository {
 
     @Override
     public List<Mensualidad> obtenerTodos() throws PersistenceException { return localRepo.obtenerTodos(); }
+    
+    @Override
+    public List<Mensualidad> obtenerPorMes(String mes) throws PersistenceException { return localRepo.obtenerPorMes(mes); }
+    
+    @Override
+    public List<Mensualidad> obtenerPorAnio(String anio) throws PersistenceException { return localRepo.obtenerPorAnio(anio); }
 
     @Override
     public void actualizar(Mensualidad mensualidad) throws PersistenceException {
@@ -70,6 +76,9 @@ public class MensualidadRepositorySyncImpl implements IMensualidadRepository {
         }).start();
     }
     
+    @Override
+    public List<String> obtenerAnios() throws PersistenceException { return localRepo.obtenerAnios(); }
+    
     private void guardarEnColaDeSincronizacion(Long entidadId, String accion) {
         System.out.println("Guardado en cola para reintento: " + accion + " - ID: " + entidadId);
         
@@ -82,10 +91,4 @@ public class MensualidadRepositorySyncImpl implements IMensualidadRepository {
             System.out.println(e.getMessage());
         }
     }
-
-    @Override
-    public List<String> obtenerAnios() throws PersistenceException { return localRepo.obtenerAnios(); }
-
-    @Override
-    public List<String> obtenerMesesPorAnio(String anio) throws PersistenceException { return localRepo.obtenerMesesPorAnio(anio); }
 }

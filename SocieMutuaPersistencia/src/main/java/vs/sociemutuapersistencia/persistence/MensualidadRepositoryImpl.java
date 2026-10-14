@@ -67,25 +67,60 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
             throw new PersistenceException("Error buscar la mensualidad con ID: " + id);
         }
         
-        return null;}
+        return null;
+    }
 
     @Override
     public List<Mensualidad> obtenerTodos() throws PersistenceException {
         String sql = "SELECT * FROM mensualidades";
-        List<Mensualidad> socios = new ArrayList<>();
+        List<Mensualidad> mensualidades = new ArrayList<>();
         
         try(
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
         ) {
             while(rs.next()) {
-                socios.add(pm.mapearMensualidad(rs));
+                mensualidades.add(pm.mapearMensualidad(rs));
             }
         } catch(Exception e) {
             throw new PersistenceException("Error al consultar la lista de mensualidades");
         }
         
-        return socios;
+        return mensualidades;
+    }
+    
+    @Override
+    public List<Mensualidad> obtenerPorMes(String mes) throws PersistenceException {
+        String sql = "SELECT * FROM mensualidades WHERE mes = ?";
+        List<Mensualidad> mensualidades = new ArrayList<>();
+        
+        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, mes);
+            ResultSet rs = stmt.executeQuery();
+            
+            while(rs.next()) mensualidades.add(pm.mapearMensualidad(rs));
+        }catch(Exception e) {
+            throw new PersistenceException("Error al obtener los meses");
+        }
+        
+        return mensualidades;
+    }
+    
+    @Override
+    public List<Mensualidad> obtenerPorAnio(String anio) throws PersistenceException {
+        String sql = "SELECT * FROM mensualidades WHERE anio = ? GROUP BY mes";
+        List<Mensualidad> meses = new ArrayList<>();
+        
+        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, anio);
+            ResultSet rs = stmt.executeQuery();
+            
+            while(rs.next()) meses.add(pm.mapearMensualidad(rs));
+        }catch(Exception e) {
+            throw new PersistenceException("Error al obtener los meses");
+        }
+        
+        return meses;
     }
 
     @Override
@@ -138,21 +173,21 @@ public class MensualidadRepositoryImpl implements IMensualidadRepository {
         return anios;
     }
     
-    @Override
-    public List<String> obtenerMesesPorAnio(String anio) throws PersistenceException {
-        String sql = "SELECT DISTINCT mes FROM mensualidades WHERE anio = ?";
-        List<String> meses = new ArrayList<>();
-        
-        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, anio);
-            ResultSet rs = stmt.executeQuery();
-            
-            while(rs.next()) meses.add(rs.getString("mes"));
-        }catch(Exception e) {
-            throw new PersistenceException("Error al obtener los meses");
-        }
-        
-        return meses;
-    }
+//    @Override
+//    public List<String> obtenerMesesPorAnio(String anio) throws PersistenceException {
+//        String sql = "SELECT DISTINCT mes FROM mensualidades WHERE anio = ?";
+//        List<String> meses = new ArrayList<>();
+//        
+//        try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+//            stmt.setString(1, anio);
+//            ResultSet rs = stmt.executeQuery();
+//            
+//            while(rs.next()) meses.add(rs.getString("mes"));
+//        }catch(Exception e) {
+//            throw new PersistenceException("Error al obtener los meses");
+//        }
+//        
+//        return meses;
+//    }
     
 }

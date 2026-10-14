@@ -1,6 +1,7 @@
 package vs.sociemutuadto.dto;
 
 import java.sql.Date;
+import java.util.Objects;
 
 /**
  * Clase DTO de Mensualidad para mostrar informacion en la UI.
@@ -107,6 +108,33 @@ public class MensualidadDTO {
 
     public void setIglesiaId(Long iglesiaId) {
         this.iglesiaId = iglesiaId;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MensualidadDTO other = (MensualidadDTO) obj;
+        return Objects.equals(this.id, other.id);
+    }
+
+    @Override
+    public String toString() {
+        return mes;
     }
 
 }

@@ -41,7 +41,6 @@ public class MensualidadView extends javax.swing.JDialog {
     private final MensualidadDTO mensualidad;
     private final DefaultListModel<SocioDTO> sociosList = new DefaultListModel<>();
     private final IglesiaDTO iglesia;
-    //private final IglesiaDTO iglesia;
     
     private int nPagan;
     
@@ -78,31 +77,33 @@ public class MensualidadView extends javax.swing.JDialog {
         this.manejarElementosVisuales();
     }
     
+    /**
+     * Maneja los elementos visuales de la ventana.
+     */
     private void manejarElementosVisuales() {
-        if(this.mensualidad.getIglesiaId() != null) {
-            for (Socio socio : socioRepo.obtenerTodosPorIglesia(mensualidad.getIglesiaId())) {
-                this.sociosList.addElement(SocioDTOMapper.toDto(socio));
-                nPagan = socio.isPaga() ? nPagan + 1 : nPagan;
-            }
-        }
-
-        if(this.mensualidad == null) {
-            return;
-        }
-        
-        if(operacion.equals(Operations.AGREGAR)) {
-            this.setTitle(this.getTitle() + " | Guardar");
-            if(this.mensualidad.getIglesiaId() != null)
-                this.lblIglesia.setText(this.mensualidad.getNombreIglesia());
-            else 
-                this.lblIglesia.setText("Ninguna iglesia seleccionada");
-            
+        if(this.mensualidad.getIglesiaId() == null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", new Locale("es", "ES"));
             String fechaTexto = LocalDate.now().format(formatter);
             
             fechaTexto = fechaTexto.substring(0, 1).toUpperCase() + fechaTexto.substring(1);
             
             this.lblInfo.setText(fechaTexto);
+            
+            this.lblNPagan.setText("");
+            this.txtAbonos.setEnabled(false);
+            this.txtDefunciones.setEnabled(false);
+            this.btnConfirmacion.setEnabled(false);
+            this.lblIglesia.setText("Ninguna iglesia seleccionada");
+            return;
+        } else {
+            this.txtAbonos.setEnabled(true);
+            this.txtDefunciones.setEnabled(true);
+            this.btnConfirmacion.setEnabled(true);
+        }
+        
+        if(operacion.equals(Operations.AGREGAR)) {
+            this.setTitle(this.getTitle() + " | Guardar");
+            this.lblIglesia.setText(this.mensualidad.getNombreIglesia());
             this.lblNPagan.setText(String.valueOf(nPagan));
             this.lblCargos.setText("$ 0.00");
             
@@ -126,22 +127,8 @@ public class MensualidadView extends javax.swing.JDialog {
     }
     
     /**
-     * Actualiza la vista conforme a nuevos datos que se obtengan de una iglesia.
+     * Configua el diseno de los componentes de la ventaña.
      */
-    private void actualizarDatosIglesia() {
-        this.lblIglesia.setText(this.iglesia.getNombre());
-        
-        this.sociosList.clear();
-        this.nPagan = 0;
-        
-        for (Socio socio : socioRepo.obtenerTodosPorIglesia(iglesia.getId())) {
-            this.sociosList.addElement(SocioDTOMapper.toDto(socio));
-            nPagan = socio.isPaga() ? nPagan + 1 : nPagan;
-        }
-        
-        this.lblNPagan.setText(String.valueOf(nPagan));
-    }
-    
     private void configurarDesign() {
         // Configuraciones para la lista de socios
         this.lSocios.setCellRenderer(new SocioColorRenderer());
@@ -156,6 +143,7 @@ public class MensualidadView extends javax.swing.JDialog {
         this.jScrollPane1.putClientProperty("FlatLaf.style", "arc: 10;");
         this.jScrollPane1.getViewport().setOpaque(false);
         
+        this.txtDefunciones.putClientProperty("FlatLaf.style", "arc: 10;");
         this.txtAbonos.putClientProperty("FlatLaf.style", "arc: 10;");
         this.txtAbonos.addFocusListener(new FocusAdapter() {
            @Override
@@ -173,13 +161,25 @@ public class MensualidadView extends javax.swing.JDialog {
            }
         });
         
-        this.txtDefunciones.putClientProperty("FlatLaf.style", "arc: 10;");
-        
-        this.btnConfirmacion.putClientProperty("FlatLaf.style", "background: #586E26; hoverBackground: #778C43; pressedBackground: #445A14");
-        this.btnConfirmacion.putClientProperty("JButton.buttonType", "roundRect");
-        this.btnConfirmacion.setForeground(java.awt.Color.BLACK);
-        
         this.btnSearchIglesia.putClientProperty("JButton.buttonType", "toolBarButton");
+    }
+    
+    /**
+     * Actualiza la vista conforme a nuevos datos que se obtengan de una iglesia.
+     */
+    private void actualizarDatosIglesia() {       
+        this.sociosList.clear();
+        this.nPagan = 0;
+        
+        for (Socio socio : socioRepo.obtenerTodosPorIglesia(iglesia.getId())) {
+            this.sociosList.addElement(SocioDTOMapper.toDto(socio));
+            nPagan = socio.isPaga() ? nPagan + 1 : nPagan;
+        }
+        
+        this.lblNPagan.setText(String.valueOf(nPagan));
+        
+        this.mensualidad.setIglesiaId(iglesia.getId());
+        this.mensualidad.setNombreIglesia(iglesia.getNombre());
     }
     
     private boolean camposCorrectos() {
@@ -264,7 +264,7 @@ public class MensualidadView extends javax.swing.JDialog {
         lblIglesia = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Mensualdades");
+        setTitle("Mensualidades");
         setResizable(false);
 
         btnConfirmacion.setText("Actualizar");
@@ -464,7 +464,7 @@ public class MensualidadView extends javax.swing.JDialog {
             mDto.setSociosPagan(Long.valueOf(this.lblNPagan.getText()));
             mDto.setDefunciones(Long.valueOf(this.txtDefunciones.getText()));
             mDto.setCargos(Double.valueOf(this.lblCargos.getText().substring(1)));
-            mDto.setIglesiaId(this.mensualidad.getIglesiaId());
+            mDto.setIglesiaId(this.iglesia.getId());
 
             MensualidadDTO mGuardada = MensualidadDTOMapper.toDto(this.mensualidadRepo.guardar(MensualidadDTOMapper.toEntity(mDto)));
             this.mensualidad.setId(mGuardada.getId());
@@ -476,7 +476,10 @@ public class MensualidadView extends javax.swing.JDialog {
     private void btnSearchIglesiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchIglesiaActionPerformed
         IglesiaSearcherView isv = new IglesiaSearcherView(JOptionPane.getFrameForComponent(this), true, this.iglesia);
         isv.setVisible(true);
-        this.actualizarDatosIglesia();
+        if(this.iglesia.getId() != null) {
+            this.actualizarDatosIglesia();
+            this.manejarElementosVisuales();
+        }
     }//GEN-LAST:event_btnSearchIglesiaActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

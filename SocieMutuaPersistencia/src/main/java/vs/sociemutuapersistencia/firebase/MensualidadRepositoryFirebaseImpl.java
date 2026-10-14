@@ -46,7 +46,7 @@ public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository
 
     @Override
     public Mensualidad buscarPorId(Long id) throws PersistenceException { return null; }
-
+    
     @Override
     public List<Mensualidad> obtenerTodos() throws PersistenceException {
         Firestore db = FirestoreClient.getFirestore();
@@ -96,8 +96,12 @@ public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository
     }
 
     @Override
-    public List<String> obtenerMesesPorAnio(String anio) throws PersistenceException {
+    public List<Mensualidad> obtenerPorMes(String mes) throws PersistenceException {
         return null;
     }
     
+    @Override
+    public List<Mensualidad> obtenerPorAnio(String anio) throws PersistenceException {
+        return null;
+    }
 }

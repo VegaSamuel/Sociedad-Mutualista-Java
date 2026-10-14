@@ -30,6 +30,16 @@ public interface IMensualidadRepository {
      */
     List<Mensualidad> obtenerTodos() throws PersistenceException;
     
+    List<Mensualidad> obtenerPorMes(String mes) throws PersistenceException;
+        
+    /**
+     * 
+     * @param anio
+     * @return
+     * @throws PersistenceException 
+     */
+    List<Mensualidad> obtenerPorAnio(String anio) throws PersistenceException;
+    
     /**
      * Actualiza una mensualidad en la base de datos.
      * @param mensualidad Mensualidad actualizada.
@@ -43,7 +53,5 @@ public interface IMensualidadRepository {
     void eliminar(Long id) throws PersistenceException;
     
     public List<String> obtenerAnios() throws PersistenceException;
-    
-    List<String> obtenerMesesPorAnio(String anio) throws PersistenceException;
     
 }
