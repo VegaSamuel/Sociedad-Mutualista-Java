@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.text.AbstractDocument;
 import vs.sociemutuadominio.interfaces.IMensualidadRepository;
 import vs.sociemutuadominio.interfaces.ISocioRepository;
+import vs.sociemutuadominio.models.Mensualidad;
 import vs.sociemutuadominio.models.Socio;
 import vs.sociemutuadto.dto.IglesiaDTO;
 import vs.sociemutuadto.dto.MensualidadDTO;
@@ -37,12 +38,14 @@ import vs.sociemutuapresentacion.utils.SocioColorRenderer;
 public class MensualidadView extends javax.swing.JDialog {
     private final IMensualidadRepository mensualidadRepo;
     private final ISocioRepository socioRepo;
-    private final Operations operacion;
-    private final MensualidadDTO mensualidad;
     private final DefaultListModel<SocioDTO> sociosList = new DefaultListModel<>();
     private final IglesiaDTO iglesia;
     
     private int nPagan;
+    private MensualidadDTO mensualidad;
+    private Operations operacion;
+    
+    private boolean bloqueo = false;
     
     /**
      * Creates new form MensualidadView
@@ -51,8 +54,9 @@ public class MensualidadView extends javax.swing.JDialog {
      * @param mensualidad Mensualidad que se administrara.
      * @param iglesia
      * @param operacion Operacion que se realizara en la mensualidad.
+     * @param cuota
      */
-    public MensualidadView(Frame parent, boolean modal, MensualidadDTO mensualidad, IglesiaDTO iglesia, Operations operacion) {
+    public MensualidadView(Frame parent, boolean modal, MensualidadDTO mensualidad, IglesiaDTO iglesia, Operations operacion, Double cuota) {
         super(parent, modal);
         
         this.mensualidadRepo = new MensualidadRepositorySyncImpl(
@@ -68,8 +72,19 @@ public class MensualidadView extends javax.swing.JDialog {
         this.iglesia = iglesia;
         this.mensualidad = mensualidad;
         this.mensualidad.setIglesiaId(iglesia.getId());
-        this.mensualidad.setCuota(40.00d);
+        this.mensualidad.setCuota(cuota);
         this.operacion = operacion;
+        
+        // Define la fecha para el objeto
+        if(this.mensualidad.getAnio() == null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", new Locale("es", "ES"));
+            String fechaTexto = LocalDate.now().format(formatter);
+
+            fechaTexto = fechaTexto.substring(0, 1).toUpperCase() + fechaTexto.substring(1);
+
+            this.mensualidad.setMes(fechaTexto.substring(0, fechaTexto.lastIndexOf(" ")));
+            this.mensualidad.setAnio(fechaTexto.substring(fechaTexto.lastIndexOf(" ") + 1));
+        }
         
         initComponents();
         
@@ -81,13 +96,10 @@ public class MensualidadView extends javax.swing.JDialog {
      * Maneja los elementos visuales de la ventana.
      */
     private void manejarElementosVisuales() {
-        if(this.mensualidad.getIglesiaId() == null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", new Locale("es", "ES"));
-            String fechaTexto = LocalDate.now().format(formatter);
-            
-            fechaTexto = fechaTexto.substring(0, 1).toUpperCase() + fechaTexto.substring(1);
-            
-            this.lblInfo.setText(fechaTexto);
+        this.setTitle("Mensualidad");
+        
+        if(this.mensualidad.getIglesiaId() == null) {  
+            this.lblInfo.setText(this.mensualidad.getMes() + " " + this.mensualidad.getAnio());
             
             this.lblNPagan.setText("");
             this.txtAbonos.setEnabled(false);
@@ -95,10 +107,6 @@ public class MensualidadView extends javax.swing.JDialog {
             this.btnConfirmacion.setEnabled(false);
             this.lblIglesia.setText("Ninguna iglesia seleccionada");
             return;
-        } else {
-            this.txtAbonos.setEnabled(true);
-            this.txtDefunciones.setEnabled(true);
-            this.btnConfirmacion.setEnabled(true);
         }
         
         if(operacion.equals(Operations.AGREGAR)) {
@@ -107,11 +115,23 @@ public class MensualidadView extends javax.swing.JDialog {
             this.lblNPagan.setText(String.valueOf(nPagan));
             this.lblCargos.setText("$ 0.00");
             
+            this.txtAbonos.setEnabled(true);
+            this.txtDefunciones.setEnabled(true);
+            this.btnConfirmacion.setEnabled(true);
+            
             this.btnConfirmacion.setText("Registrar");
         }
         
         if(operacion.equals(Operations.ACTUALIZAR)) {
             this.setTitle(this.getTitle() + " | Actualizar");
+            this.lblIglesia.setText(this.iglesia.getNombre());
+            
+            this.btnConfirmacion.setEnabled(true);
+            
+            this.txtAbonos.setEnabled(!bloqueo);
+            this.txtDefunciones.setEnabled(!bloqueo);
+            
+            this.btnConfirmacion.setText(bloqueo ? "Editar" : "Actualizar");
             
             this.txtAbonos.setText(mensualidad.getAbonos().toString());
             this.txtDefunciones.setText(mensualidad.getDefunciones().toString());
@@ -180,6 +200,16 @@ public class MensualidadView extends javax.swing.JDialog {
         
         this.mensualidad.setIglesiaId(iglesia.getId());
         this.mensualidad.setNombreIglesia(iglesia.getNombre());
+        
+        for (Mensualidad mes : this.mensualidadRepo.obtenerPorMes(mensualidad.getMes())) {
+            if(mes.getIglesia().getId().equals(mensualidad.getIglesiaId())) {
+                this.mensualidad = MensualidadDTOMapper.toDto(mes);
+                this.mensualidad.setIglesiaId(mes.getIglesia().getId());
+                this.operacion = Operations.ACTUALIZAR;
+                this.bloqueo = true;
+                this.mostrarInfo("Esta iglesia ya ha registrado el presente mes. \nSe le mostrará esa información.", "Mensualidad ya registrada");
+            }
+        }
     }
     
     private boolean camposCorrectos() {
@@ -470,7 +500,36 @@ public class MensualidadView extends javax.swing.JDialog {
             this.mensualidad.setId(mGuardada.getId());
             
             this.mostrarInfo("Mensualidad guardada exitosamente.", "Mensualidad Guardada");
+            dispose();
         }
+        
+        if(this.operacion.equals(Operations.ACTUALIZAR)) {
+            if(bloqueo == true) {
+                this.bloqueo = false;
+                this.manejarElementosVisuales();
+            } else {
+                MensualidadDTO mDto = new MensualidadDTO();
+                
+                mDto.setId(this.mensualidad.getId());
+                mDto.setMes(this.mensualidad.getMes());
+                mDto.setAnio(this.mensualidad.getAnio());
+                mDto.setCuota(this.mensualidad.getCuota());
+                mDto.setAbonos(Double.valueOf(this.txtAbonos.getText()));
+                mDto.setFechaCreacion(this.mensualidad.getFechaCreacion());
+                mDto.setSociosPagan(Long.valueOf(this.lblNPagan.getText()));
+                mDto.setDefunciones(Long.valueOf(this.txtDefunciones.getText()));
+                mDto.setCargos(Double.valueOf(this.lblCargos.getText().substring(1)));
+                mDto.setIglesiaId(this.iglesia.getId());
+                
+                this.mostrarInfo("Mensualidad actualizada exitosamente.", "Actualizada");
+                
+                this.mensualidadRepo.actualizar(MensualidadDTOMapper.toEntity(mDto));
+                this.bloqueo = true;
+                this.manejarElementosVisuales();
+            }
+        }
+        
+        
     }//GEN-LAST:event_btnConfirmacionActionPerformed
 
     private void btnSearchIglesiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchIglesiaActionPerformed

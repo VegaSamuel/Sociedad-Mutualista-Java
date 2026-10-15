@@ -63,7 +63,12 @@ public class MensualidadRepositoryFirebaseImpl implements IMensualidadRepository
                 mensualidad.setAnio(doc.getString("anio"));
                 mensualidad.setCuota(doc.getDouble("cuota"));
                 mensualidad.setAbonos(doc.getDouble("abonos"));
-                mensualidad.setFechaCreacion((Date) doc.getDate("fecha_ingreso"));
+                
+                java.util.Date fechaCreacion = doc.getDate("fecha_creacion");
+                if(fechaCreacion != null) {
+                    mensualidad.setFechaCreacion(new java.sql.Date(fechaCreacion.getTime()));
+                }
+                
                 mensualidad.setSociosPagan(doc.getLong("socios_pagan"));
                 mensualidad.setDefunciones(doc.getLong("defunciones"));
                 mensualidad.setCargos(doc.getDouble("cargos"));

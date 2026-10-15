@@ -5,3 +5,5 @@
 /SocieMutuaPersistencia/nbproject/
 /SocieMutuaDto/target/
 /SocieMutuaPresentacion/target/
+/SocieMutuaPresentacion/sociedad_mutualista.db
+SocieMutuaPersistencia/.env

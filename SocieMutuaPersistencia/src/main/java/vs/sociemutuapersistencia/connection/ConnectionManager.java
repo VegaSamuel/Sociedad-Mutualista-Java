@@ -14,8 +14,6 @@ public class ConnectionManager {
     private static Connection con;
     private static final Dotenv env = Dotenv.configure().directory("../SocieMutuaPersistencia").load();
     private static final String URL = env.get("DB_URL");
-    private static final String USER = env.get("DB_USER");
-    private static final String PASSWORD = env.get("DB_PASSWORD");
     
     private ConnectionManager() {}
     
@@ -26,7 +24,7 @@ public class ConnectionManager {
     public static Connection getConnection() {
         if (con == null) {
             try {
-                con = DriverManager.getConnection(URL, USER, PASSWORD);
+                con = DriverManager.getConnection(URL);
                 System.out.println("Conexion establecida con exito");
                 
                 inicializarEstructura(con);
@@ -45,23 +43,23 @@ public class ConnectionManager {
     private static void inicializarEstructura(Connection conn) {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS iglesias (" +
-                    "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "nombre VARCHAR(255) NOT NULL, " +
                     "saldo DOUBLE, " +
                     "pastor VARCHAR(255))");
 
             stmt.execute("CREATE TABLE IF NOT EXISTS socios (" +
-                    "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "nombres VARCHAR(255), " +
                     "apellido_paterno VARCHAR(255), " +
                     "apellido_materno VARCHAR(255), " +
                     "fecha_ingreso DATE, " +
                     "paga BOOLEAN, " +
-                    "iglesia_id BIGINT, " +
+                    "iglesia_id INTEGER, " +
                     "FOREIGN KEY (iglesia_id) REFERENCES iglesias(id) ON DELETE SET NULL)");
 
             stmt.execute("CREATE TABLE IF NOT EXISTS mensualidades (" +
-                    "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "mes VARCHAR(50), " +
                     "anio VARCHAR(4), " +
                     "cuota DOUBLE, " +
@@ -70,18 +68,23 @@ public class ConnectionManager {
                     "socios_pagan INT, " +
                     "defunciones INT, " +
                     "cargos DOUBLE, " +
-                    "iglesia_id BIGINT, " +
+                    "iglesia_id INTEGER, " +
                     "FOREIGN KEY (iglesia_id) REFERENCES iglesias(id) ON DELETE SET NULL)");
 
             stmt.execute("CREATE TABLE IF NOT EXISTS tabla_sync (" +
-                    "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "entidad VARCHAR(50), " +
-                    "entidad_id BIGINT, " +
+                    "entidad_id INTEGER, " +
                     "accion VARCHAR(10))");
+            
+            stmt.execute("CREATE TABLE IF NOT EXISTS app_commons ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "key VARCHAR(50), "
+                    + "value VARCHAR(50))");
 
-            System.out.println("Estructura de tablas verificada/creada con éxito.");
+            System.out.println("Estructura de tablas SQLite verificada/creada con éxito.");
         } catch (SQLException e) {
-            System.err.println("Error al crear la estructura de tablas: " + e.getMessage());
+            System.err.println("Error al crear la estructura de tablas SQLite: " + e.getMessage());
         }
     }
 }

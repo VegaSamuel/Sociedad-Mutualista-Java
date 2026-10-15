@@ -2,6 +2,7 @@ package vs.sociemutuapresentacion.ui;
 
 import java.awt.Color;
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -21,6 +22,7 @@ import vs.sociemutuapersistencia.persistence.MensualidadRepositoryImpl;
 import vs.sociemutuapersistencia.sync.persistence.IglesiaRepositorySyncImpl;
 import vs.sociemutuapersistencia.sync.persistence.MensualidadRepositorySyncImpl;
 import vs.sociemutuapresentacion.enums.Operations;
+import vs.sociemutuapresentacion.ui.tables.IglesiasTableView;
 
 /**
  * Ventana principal de todo el programa.
@@ -63,7 +65,7 @@ public class MainView extends javax.swing.JFrame {
     }
     
     private void manejarElementosVisuales() {
-        this.anios = this.mensualidadRepo.obtenerAnios();
+         this.anios = this.mensualidadRepo.obtenerAnios();
         Date hoy = new Date(System.currentTimeMillis());
         this.indexAnios = anios.indexOf(String.valueOf(hoy.toLocalDate().getYear()));
         
@@ -85,6 +87,9 @@ public class MainView extends javax.swing.JFrame {
             this.lblPastor.setText(dto.getPastor());
             this.lblNPagan.setText(String.valueOf(this.actualMensualidad.getSociosPagan()));
             this.lblDefunciones.setText(String.valueOf(this.actualMensualidad.getDefunciones()));
+            
+            DateFormat formatoFecha = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale("es", "MX"));
+            this.lblFecha.setText(formatoFecha.format(this.actualMensualidad.getFechaCreacion()));
             
             NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(new Locale("es", "MX"));
             this.lblCargos.setText(formatoMoneda.format(this.actualMensualidad.getCargos()));
@@ -149,7 +154,19 @@ public class MainView extends javax.swing.JFrame {
         this.iglesias.clear();
         this.meses.clear();
         
-        for (Mensualidad mes : this.mensualidadRepo.obtenerPorAnio(this.anios.get(indexAnios))) {
+        List<Mensualidad> listaMensualidades = this.mensualidadRepo.obtenerPorAnio(this.anios.get(indexAnios));
+        List<String> ordenMeses = java.util.Arrays.asList(
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        );
+        
+        listaMensualidades.sort((m1, m2) -> {
+            int index1 = ordenMeses.indexOf(m1.getMes());
+            int index2 = ordenMeses.indexOf(m2.getMes());
+            return Integer.compare(index1, index2);
+        });
+        
+        for (Mensualidad mes : listaMensualidades) {
             this.meses.addElement(MensualidadDTOMapper.toDto(mes));
         }
     }
@@ -179,6 +196,9 @@ public class MainView extends javax.swing.JFrame {
         lblNPagan = new javax.swing.JLabel();
         etDefunciones = new javax.swing.JLabel();
         lblDefunciones = new javax.swing.JLabel();
+        lblFecha = new javax.swing.JLabel();
+        etFecha = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         resumePanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -231,80 +251,61 @@ public class MainView extends javax.swing.JFrame {
         jLabel4.setText("Iglesias");
 
         propertiesPanel.setBackground(new java.awt.Color(51, 51, 51));
+        propertiesPanel.setMinimumSize(new java.awt.Dimension(390, 341));
+        propertiesPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        etPastor.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         etPastor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         etPastor.setText("Pastor");
+        propertiesPanel.add(etPastor, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 100, 378, -1));
 
         lblPastor.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblPastor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblPastor.setText("jLabel2");
+        propertiesPanel.add(lblPastor, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 62, 378, -1));
 
+        etCargos.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         etCargos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         etCargos.setText("Cargos");
         etCargos.setToolTipText("");
+        propertiesPanel.add(etCargos, new org.netbeans.lib.awtextra.AbsoluteConstraints(209, 169, 175, -1));
 
         lblCargos.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblCargos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblCargos.setText("jLabel1");
+        propertiesPanel.add(lblCargos, new org.netbeans.lib.awtextra.AbsoluteConstraints(209, 134, 175, -1));
 
+        etNPagan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         etNPagan.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         etNPagan.setText("Socios que pagan");
+        propertiesPanel.add(etNPagan, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 241, 378, -1));
 
         lblNPagan.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblNPagan.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNPagan.setText("jLabel1");
+        propertiesPanel.add(lblNPagan, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 203, 378, -1));
 
+        etDefunciones.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         etDefunciones.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         etDefunciones.setText("Defunciones");
+        propertiesPanel.add(etDefunciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 169, 197, -1));
 
         lblDefunciones.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblDefunciones.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblDefunciones.setText("jLabel1");
+        propertiesPanel.add(lblDefunciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 134, 197, -1));
 
-        javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
-        propertiesPanel.setLayout(propertiesPanelLayout);
-        propertiesPanelLayout.setHorizontalGroup(
-            propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(propertiesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(etPastor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(etNPagan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblPastor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblNPagan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(propertiesPanelLayout.createSequentialGroup()
-                        .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(etDefunciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblDefunciones, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblCargos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
-                            .addComponent(etCargos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(6, 6, 6))
-        );
-        propertiesPanelLayout.setVerticalGroup(
-            propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(propertiesPanelLayout.createSequentialGroup()
-                .addGap(62, 62, 62)
-                .addComponent(lblPastor)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(etPastor, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblCargos)
-                    .addGroup(propertiesPanelLayout.createSequentialGroup()
-                        .addComponent(lblDefunciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(3, 3, 3)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(etCargos)
-                    .addComponent(etDefunciones))
-                .addGap(18, 18, 18)
-                .addComponent(lblNPagan)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(etNPagan)
-                .addContainerGap(81, Short.MAX_VALUE))
-        );
+        lblFecha.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
+        lblFecha.setText("jLabel1");
+        propertiesPanel.add(lblFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(94, 321, 290, -1));
+
+        etFecha.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        etFecha.setText("Fecha de Captura:");
+        propertiesPanel.add(etFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 321, -1, -1));
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Por favor, seleccione un mes");
+        propertiesPanel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 390, -1));
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Propiedades");
@@ -371,6 +372,7 @@ public class MainView extends javax.swing.JFrame {
         tablesMenu.setText("Mostrar Tabla");
 
         iglesiasTableMenu.setText("Iglesias");
+        iglesiasTableMenu.addActionListener(this::iglesiasTableMenuActionPerformed);
         tablesMenu.add(iglesiasTableMenu);
 
         adminMenu.add(tablesMenu);
@@ -411,7 +413,7 @@ public class MainView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
@@ -432,12 +434,14 @@ public class MainView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(resumePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lMeses, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAgregarMensualidad)))
+                        .addComponent(btnAgregarMensualidad))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -450,7 +454,7 @@ public class MainView extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
     private void btnAgregarMensualidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarMensualidadActionPerformed
-        MensualidadView mw = new MensualidadView(this, true, new MensualidadDTO(), new IglesiaDTO(), Operations.AGREGAR);
+        MensualidadView mw = new MensualidadView(this, true, new MensualidadDTO(), new IglesiaDTO(), Operations.AGREGAR, this.cuota);
         mw.setVisible(true);
         //this.manejarElementosVisuales();
     }//GEN-LAST:event_btnAgregarMensualidadActionPerformed
@@ -483,6 +487,11 @@ public class MainView extends javax.swing.JFrame {
         JOptionPane.showInputDialog(this, "Escribe la nueva cuota.", this.cuota);
     }//GEN-LAST:event_cuotaAdminMenuActionPerformed
 
+    private void iglesiasTableMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iglesiasTableMenuActionPerformed
+        IglesiasTableView itv = new IglesiasTableView(this, true);
+        itv.setVisible(true);
+    }//GEN-LAST:event_iglesiasTableMenuActionPerformed
+
     private void esconderEtiquetas() {       
         this.etPastor.setVisible(false);
         this.lblPastor.setVisible(false);
@@ -492,6 +501,8 @@ public class MainView extends javax.swing.JFrame {
         this.lblNPagan.setVisible(false);
         this.etDefunciones.setVisible(false);
         this.lblDefunciones.setVisible(false);
+        this.etFecha.setVisible(false);
+        this.lblFecha.setVisible(false);
     }
     
     private void revelarEtiquetas() {
@@ -503,6 +514,8 @@ public class MainView extends javax.swing.JFrame {
         this.lblNPagan.setVisible(true);
         this.etDefunciones.setVisible(true);
         this.lblDefunciones.setVisible(true);
+        this.etFecha.setVisible(true);
+        this.lblFecha.setVisible(true);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -516,11 +529,13 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JLabel etCargos;
     private javax.swing.JLabel etDefunciones;
+    private javax.swing.JLabel etFecha;
     private javax.swing.JLabel etNPagan;
     private javax.swing.JLabel etPastor;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem iglesiasTableMenu;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -533,6 +548,7 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JLabel lblAnio;
     private javax.swing.JLabel lblCargos;
     private javax.swing.JLabel lblDefunciones;
+    private javax.swing.JLabel lblFecha;
     private javax.swing.JLabel lblNPagan;
     private javax.swing.JLabel lblPastor;
     private javax.swing.JMenuBar menuBar;

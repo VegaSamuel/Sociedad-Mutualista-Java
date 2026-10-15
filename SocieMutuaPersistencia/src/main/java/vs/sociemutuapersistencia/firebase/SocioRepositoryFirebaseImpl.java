@@ -62,7 +62,12 @@ public class SocioRepositoryFirebaseImpl implements ISocioRepository {
                         doc.getString("apellido_paterno"),
                         doc.getString("apellido_materno")
                 ));
-                socio.setFechaIngreso((Date) doc.getDate("fecha_ingreso"));
+                
+                java.util.Date fechaIngreso = doc.getDate("fecha_ingreso");
+                if(fechaIngreso != null) {
+                    socio.setFechaIngreso(new java.sql.Date(fechaIngreso.getTime()));
+                }
+                
                 socio.setPaga(doc.getBoolean("paga"));
                 if(doc.getLong("iglesia_id") != null) {
                     Iglesia iglesia = new Iglesia();

@@ -489,7 +489,7 @@ public class GodView extends javax.swing.JFrame {
     }//GEN-LAST:event_btnShowSTblActionPerformed
 
     private void btnMSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMSaveActionPerformed
-        MensualidadView mv = new MensualidadView(this, true, new MensualidadDTO(), this.testIg, Operations.AGREGAR);
+        MensualidadView mv = new MensualidadView(this, true, new MensualidadDTO(), this.testIg, Operations.AGREGAR, 0.0);
         mv.setVisible(true);
     }//GEN-LAST:event_btnMSaveActionPerformed
 
