@@ -1,10 +1,19 @@
 package vs.sociemutuapresentacion.ui.tables;
 
+import java.awt.Color;
 import java.awt.Frame;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
+import vs.sociemutuadominio.interfaces.ISocioRepository;
+import vs.sociemutuadominio.models.Socio;
 import vs.sociemutuadto.dto.IglesiaDTO;
-import vs.sociemutuadto.dto.MensualidadDTO;
 import vs.sociemutuadto.dto.SocioDTO;
+import vs.sociemutuadto.mapper.SocioDTOMapper;
+import vs.sociemutuapersistencia.persistence.SocioRepositoryImpl;
+import vs.sociemutuapresentacion.enums.Operations;
+import vs.sociemutuapresentacion.ui.IglesiaView;
+import vs.sociemutuapresentacion.ui.SocioView;
 import vs.sociemutuapresentacion.utils.TableManager;
 
 /**
@@ -13,6 +22,8 @@ import vs.sociemutuapresentacion.utils.TableManager;
  */
 public class SociosTableView extends javax.swing.JDialog {
     private final TableManager tm;
+    private final ISocioRepository socioRepo;
+    private final List<SocioDTO> socios;
 
     /**
      * Creates new form IglesiasListView
@@ -22,20 +33,59 @@ public class SociosTableView extends javax.swing.JDialog {
     public SociosTableView(Frame parent, boolean modal) {
         super(parent, modal);
         this.tm = new TableManager();
+        this.socioRepo = new SocioRepositoryImpl();
+        this.socios = new ArrayList<>();
         
         initComponents();
+        
+        this.ObtenerSociosYCargar();
+        this.btnEditar.setEnabled(false);
+        this.configurarDesign();
     }
     
-    public void cargarTablaIglesias(List<IglesiaDTO> iglesias) {
-        tm.cargarDatosEnTabla(this.entityTable, "iglesias", iglesias);
+    private void configurarDesign() {
+        this.socioTable.putClientProperty("JTable.showHorizontalLines", true);
+        this.socioTable.putClientProperty("JTable.style", "showContentLines: true; alternateRowColor: true; selectionArc: 15;");
+        this.socioTable.putClientProperty("JComponent.arc", 10);
+        this.socioTable.setGridColor(new java.awt.Color(70, 70, 70));
+        
+        this.socioTable.setRowHeight(30);
+        
+        this.socioTable.getTableHeader().setBackground(new java.awt.Color(50, 53, 55));
+        this.socioTable.getTableHeader().setForeground(Color.WHITE);
+        this.socioTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+        
+        this.jScrollPane1.putClientProperty("JComponent.arc", 20);
+        this.jScrollPane1.putClientProperty("Component.focusWidth", 0);
+        this.jScrollPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(70, 70, 70), 1));
     }
     
-    public void cargarTablaSocios(List<SocioDTO> socios) {
-        tm.cargarDatosEnTabla(this.entityTable, "socios", socios);
+    private boolean verificarSeleccionTabla() {
+        return this.socioTable.getSelectedRowCount() != 0;
     }
     
-    public void cargarTablaMensualidades(List<MensualidadDTO> mensualidades) {
-        tm.cargarDatosEnTabla(this.entityTable, "mensualidades", mensualidades);
+    private void ObtenerSociosYCargar() {
+        this.socios.clear();
+        
+        for (Socio iglesia : socioRepo.obtenerTodos()) {
+            this.socios.add(SocioDTOMapper.toDto(iglesia));
+        }
+        
+        tm.cargarDatosEnTabla(this.socioTable, "socios", socios);
+    }
+    
+     /**
+     * Muestra informacion en la pantalla.
+     * @param info Mensaje a mostrar.
+     * @param motivo De donde viene la informacion (Se muestra en cabecera).
+     */
+    private void mostrarInfo(String info, String motivo) {
+        JOptionPane.showMessageDialog(
+                this, 
+                info,
+                "Tabla de Socios | " + motivo,
+                JOptionPane.INFORMATION_MESSAGE
+            );
     }
 
     /**
@@ -48,13 +98,15 @@ public class SociosTableView extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        entityTable = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
+        socioTable = new javax.swing.JTable();
+        btnAgregar = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
+        btnBack = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Tablas");
+        setTitle("Tabla de Socios");
 
-        entityTable.setModel(new javax.swing.table.DefaultTableModel(
+        socioTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -65,9 +117,21 @@ public class SociosTableView extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(entityTable);
+        socioTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                socioTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(socioTable);
 
-        jLabel1.setText("Tabla de Iglesias");
+        btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(this::btnAgregarActionPerformed);
+
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(this::btnEditarActionPerformed);
+
+        btnBack.setText("Volver");
+        btnBack.addActionListener(this::btnBackActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -78,17 +142,23 @@ public class SociosTableView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(btnBack)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnEditar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAgregar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAgregar)
+                    .addComponent(btnEditar)
+                    .addComponent(btnBack))
                 .addContainerGap())
         );
 
@@ -96,9 +166,34 @@ public class SociosTableView extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void socioTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_socioTableMouseClicked
+        if(this.verificarSeleccionTabla()) {
+            this.btnEditar.setEnabled(true);
+        }
+    }//GEN-LAST:event_socioTableMouseClicked
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        SocioDTO socio = this.socios.get(this.socioTable.getSelectedRow());
+        SocioView sv = new SocioView(JOptionPane.getFrameForComponent(this), true, null, socio, Operations.ACTUALIZAR, null);
+        sv.setVisible(true);
+        this.ObtenerSociosYCargar();
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        SocioView sv = new SocioView(JOptionPane.getFrameForComponent(this), true, null, new SocioDTO(), Operations.ACTUALIZAR, null);
+        sv.setVisible(true);
+        this.ObtenerSociosYCargar();
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable entityTable;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnEditar;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable socioTable;
     // End of variables declaration//GEN-END:variables
 }

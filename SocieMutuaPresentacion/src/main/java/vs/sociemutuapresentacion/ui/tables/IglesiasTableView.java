@@ -1,13 +1,17 @@
 package vs.sociemutuapresentacion.ui.tables;
 
+import java.awt.Color;
 import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import vs.sociemutuadominio.interfaces.IIglesiaRepository;
 import vs.sociemutuadominio.models.Iglesia;
 import vs.sociemutuadto.dto.IglesiaDTO;
 import vs.sociemutuadto.mapper.IglesiaDTOMapper;
 import vs.sociemutuapersistencia.persistence.IglesiaRepositoryImpl;
+import vs.sociemutuapresentacion.enums.Operations;
+import vs.sociemutuapresentacion.ui.IglesiaView;
 import vs.sociemutuapresentacion.utils.TableManager;
 
 /**
@@ -29,14 +33,57 @@ public class IglesiasTableView extends javax.swing.JDialog {
         this.tm = new TableManager();
         this.iglesiaRepo = new IglesiaRepositoryImpl();
         this.iglesias = new ArrayList<>();
+
+        initComponents();
+        
+        this.ObtenerIglesiasYCargar();
+        this.btnEditar.setEnabled(false);
+        this.configurarDesign();
+    }
+    
+    private void configurarDesign() {
+        this.iglesiaTable.putClientProperty("JTable.showHorizontalLines", true);
+        this.iglesiaTable.putClientProperty("JTable.style", "showContentLines: true; alternateRowColor: true; selectionArc: 15;");
+        this.iglesiaTable.putClientProperty("JComponent.arc", 10);
+        this.iglesiaTable.setGridColor(new java.awt.Color(70, 70, 70));
+        
+        this.iglesiaTable.setRowHeight(30);
+        
+        this.iglesiaTable.getTableHeader().setBackground(new java.awt.Color(50, 53, 55));
+        this.iglesiaTable.getTableHeader().setForeground(Color.WHITE);
+        this.iglesiaTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+        
+        this.jScrollPane1.putClientProperty("JComponent.arc", 20);
+        this.jScrollPane1.putClientProperty("Component.focusWidth", 0);
+        this.jScrollPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(70, 70, 70), 1));
+    }
+    
+    private boolean verificarSeleccionTabla() {
+        return this.iglesiaTable.getSelectedRowCount() != 0;
+    }
+    
+    private void ObtenerIglesiasYCargar() {
+        this.iglesias.clear();
         
         for (Iglesia iglesia : iglesiaRepo.obtenerTodos()) {
             this.iglesias.add(IglesiaDTOMapper.toDto(iglesia));
         }
         
-        initComponents();
-        
-        tm.cargarDatosEnTabla(this.entityTable, "iglesias", iglesias);
+        tm.cargarDatosEnTabla(this.iglesiaTable, "iglesias", iglesias);
+    }
+    
+     /**
+     * Muestra informacion en la pantalla.
+     * @param info Mensaje a mostrar.
+     * @param motivo De donde viene la informacion (Se muestra en cabecera).
+     */
+    private void mostrarInfo(String info, String motivo) {
+        JOptionPane.showMessageDialog(
+                this, 
+                info,
+                "Tabla de Iglesias | " + motivo,
+                JOptionPane.INFORMATION_MESSAGE
+            );
     }
 
     /**
@@ -49,14 +96,15 @@ public class IglesiasTableView extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        entityTable = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        iglesiaTable = new javax.swing.JTable();
+        btnAgregar = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
+        btnBack = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Tablas de Iglesias");
+        setTitle("Tabla de Iglesias");
 
-        entityTable.setModel(new javax.swing.table.DefaultTableModel(
+        iglesiaTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -67,11 +115,21 @@ public class IglesiasTableView extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(entityTable);
+        iglesiaTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                iglesiaTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(iglesiaTable);
 
-        jLabel1.setText("Tabla de Iglesias");
+        btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(this::btnAgregarActionPerformed);
 
-        jButton1.setText("jButton1");
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(this::btnEditarActionPerformed);
+
+        btnBack.setText("Volver");
+        btnBack.addActionListener(this::btnBackActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -82,22 +140,23 @@ public class IglesiasTableView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addComponent(btnBack)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnEditar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAgregar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAgregar)
+                    .addComponent(btnEditar)
+                    .addComponent(btnBack))
                 .addContainerGap())
         );
 
@@ -105,10 +164,34 @@ public class IglesiasTableView extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void iglesiaTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iglesiaTableMouseClicked
+        if(this.verificarSeleccionTabla()) {
+            this.btnEditar.setEnabled(true);
+        }
+    }//GEN-LAST:event_iglesiaTableMouseClicked
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        IglesiaDTO iglesia = this.iglesias.get(this.iglesiaTable.getSelectedRow());
+        IglesiaView iv = new IglesiaView(JOptionPane.getFrameForComponent(this), true, iglesia, Operations.ACTUALIZAR);
+        iv.setVisible(true);
+        this.ObtenerIglesiasYCargar();
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        IglesiaView iv = new IglesiaView(JOptionPane.getFrameForComponent(this), true, new IglesiaDTO(), Operations.AGREGAR);
+        iv.setVisible(true);
+        this.ObtenerIglesiasYCargar();
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable entityTable;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JTable iglesiaTable;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

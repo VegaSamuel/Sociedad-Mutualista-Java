@@ -23,6 +23,7 @@ import vs.sociemutuapersistencia.sync.persistence.IglesiaRepositorySyncImpl;
 import vs.sociemutuapersistencia.sync.persistence.MensualidadRepositorySyncImpl;
 import vs.sociemutuapresentacion.enums.Operations;
 import vs.sociemutuapresentacion.ui.tables.IglesiasTableView;
+import vs.sociemutuapresentacion.ui.tables.SociosTableView;
 
 /**
  * Ventana principal de todo el programa.
@@ -33,6 +34,7 @@ public class MainView extends javax.swing.JFrame {
     private final IIglesiaRepository iglesiaRepo;
     private final DefaultListModel<IglesiaDTO> iglesias = new DefaultListModel<>();
     private final DefaultListModel<MensualidadDTO> meses = new DefaultListModel<>();
+    private final DefaultListModel<String> lInfo = new DefaultListModel<>();
     
     private List<String> anios;
     private MensualidadDTO actualMensualidad;
@@ -149,6 +151,7 @@ public class MainView extends javax.swing.JFrame {
         }
         
         this.lblAnio.setText(this.anios.get(indexAnios));
+        //this.etAnio.setText(this.lblAnio.getText());
         
         this.esconderEtiquetas();
         this.iglesias.clear();
@@ -198,9 +201,14 @@ public class MainView extends javax.swing.JFrame {
         lblDefunciones = new javax.swing.JLabel();
         lblFecha = new javax.swing.JLabel();
         etFecha = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        etInfo = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         resumePanel = new javax.swing.JPanel();
+        etAnio = new javax.swing.JLabel();
+        etIglesia = new javax.swing.JLabel();
+        lblTotal = new javax.swing.JLabel();
+        etTotal = new javax.swing.JLabel();
+        infoList = new javax.swing.JList<>();
         jLabel6 = new javax.swing.JLabel();
         btnPrevious = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
@@ -217,6 +225,7 @@ public class MainView extends javax.swing.JFrame {
         cuotaAdminMenu = new javax.swing.JMenuItem();
         tablesMenu = new javax.swing.JMenu();
         iglesiasTableMenu = new javax.swing.JMenuItem();
+        sociosTableMenu = new javax.swing.JMenuItem();
         utilMenu = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem();
         copyMenuItem = new javax.swing.JMenuItem();
@@ -303,24 +312,63 @@ public class MainView extends javax.swing.JFrame {
         etFecha.setText("Fecha de Captura:");
         propertiesPanel.add(etFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 321, -1, -1));
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Por favor, seleccione un mes");
-        propertiesPanel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 390, -1));
+        etInfo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        etInfo.setText("Por favor, seleccione un mes");
+        propertiesPanel.add(etInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 390, -1));
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Propiedades");
 
         resumePanel.setBackground(new java.awt.Color(51, 51, 51));
 
+        etAnio.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        etAnio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        etAnio.setText("Anio");
+
+        etIglesia.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        etIglesia.setText("Iglesia");
+
+        lblTotal.setText("jLabel1");
+
+        etTotal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        etTotal.setText("Total");
+
+        infoList.setModel(this.lInfo);
+
         javax.swing.GroupLayout resumePanelLayout = new javax.swing.GroupLayout(resumePanel);
         resumePanel.setLayout(resumePanelLayout);
         resumePanelLayout.setHorizontalGroup(
             resumePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(etAnio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(etIglesia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(resumePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(resumePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(etTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(resumePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(resumePanelLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(infoList, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         resumePanelLayout.setVerticalGroup(
             resumePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(resumePanelLayout.createSequentialGroup()
+                .addComponent(etAnio)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(etIglesia)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(etTotal)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTotal)
+                .addContainerGap())
+            .addGroup(resumePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(resumePanelLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(infoList, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -374,6 +422,10 @@ public class MainView extends javax.swing.JFrame {
         iglesiasTableMenu.setText("Iglesias");
         iglesiasTableMenu.addActionListener(this::iglesiasTableMenuActionPerformed);
         tablesMenu.add(iglesiasTableMenu);
+
+        sociosTableMenu.setText("Socios");
+        sociosTableMenu.addActionListener(this::sociosTableMenuActionPerformed);
+        tablesMenu.add(sociosTableMenu);
 
         adminMenu.add(tablesMenu);
 
@@ -439,9 +491,7 @@ public class MainView extends javax.swing.JFrame {
                         .addComponent(lMeses, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAgregarMensualidad))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(propertiesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -456,7 +506,6 @@ public class MainView extends javax.swing.JFrame {
     private void btnAgregarMensualidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarMensualidadActionPerformed
         MensualidadView mw = new MensualidadView(this, true, new MensualidadDTO(), new IglesiaDTO(), Operations.AGREGAR, this.cuota);
         mw.setVisible(true);
-        //this.manejarElementosVisuales();
     }//GEN-LAST:event_btnAgregarMensualidadActionPerformed
 
     private void IglesiaAdminMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IglesiaAdminMenuActionPerformed
@@ -492,7 +541,13 @@ public class MainView extends javax.swing.JFrame {
         itv.setVisible(true);
     }//GEN-LAST:event_iglesiasTableMenuActionPerformed
 
-    private void esconderEtiquetas() {       
+    private void sociosTableMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sociosTableMenuActionPerformed
+        SociosTableView stv = new SociosTableView(this, true);
+        stv.setVisible(true);
+    }//GEN-LAST:event_sociosTableMenuActionPerformed
+
+    private void esconderEtiquetas() {  
+        this.etInfo.setVisible(true);
         this.etPastor.setVisible(false);
         this.lblPastor.setVisible(false);
         this.etCargos.setVisible(false);
@@ -506,6 +561,7 @@ public class MainView extends javax.swing.JFrame {
     }
     
     private void revelarEtiquetas() {
+        this.etInfo.setVisible(false);
         this.etPastor.setVisible(true);
         this.lblPastor.setVisible(true);
         this.etCargos.setVisible(true);
@@ -527,15 +583,19 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cuotaAdminMenu;
     private javax.swing.JMenuItem cutMenuItem;
+    private javax.swing.JLabel etAnio;
     private javax.swing.JLabel etCargos;
     private javax.swing.JLabel etDefunciones;
     private javax.swing.JLabel etFecha;
+    private javax.swing.JLabel etIglesia;
+    private javax.swing.JLabel etInfo;
     private javax.swing.JLabel etNPagan;
     private javax.swing.JLabel etPastor;
+    private javax.swing.JLabel etTotal;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem iglesiasTableMenu;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JList<String> infoList;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -551,12 +611,14 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JLabel lblFecha;
     private javax.swing.JLabel lblNPagan;
     private javax.swing.JLabel lblPastor;
+    private javax.swing.JLabel lblTotal;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JPanel propertiesPanel;
     private javax.swing.JPanel resumePanel;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JMenuItem sociosTableMenu;
     private javax.swing.JMenu tablesMenu;
     private javax.swing.JMenu utilMenu;
     // End of variables declaration//GEN-END:variables
